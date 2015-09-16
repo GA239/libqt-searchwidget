@@ -199,7 +199,7 @@ void SearchWidget::removeBtn(QTagLabelButton *btn)
     QString str = btn->text();
     QFontMetrics fm(font);
     //lentag -= (fm.width(btn->text())+20);
-    lentag -=  fm.width(str)+2*padding+2*buttonPadding+fontHeight;
+    lentag -=  (fm.width(str)+2*padding+2*buttonPadding+fontHeight);
     delete flowLayout->itemAt(flowLayout->indexOf(btn))->widget();
     searchLine->setGeometry(1 + lentag,1,width - lentag - 2,height - 2);
     if(itemMap.contains(str))
