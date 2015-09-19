@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>images/close1.png</file>
+    </qresource>
+    <qresource prefix="/fonts">
+        <file>fonts/segoeui.ttf</file>
+    </qresource>
+</RCC>
