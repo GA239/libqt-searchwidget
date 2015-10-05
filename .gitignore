@@ -4,3 +4,4 @@
 *.user
 /build-*/*
 Makefile
+/DelegateExample/build-DelegateExample-Desktop
