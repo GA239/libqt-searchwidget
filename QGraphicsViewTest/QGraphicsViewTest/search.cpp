@@ -35,7 +35,7 @@ void Search::initScene()
     currentTagPoint = QPoint(0,0);
     _indent = 7;
 
-    scene->addPixmap(QPixmap("c:/Users/AG/Downloads/kak_narisovat_sticha.jpg"));
+    //scene->addPixmap(QPixmap("c:/Users/AG/Downloads/kak_narisovat_sticha.jpg"));
 }
 
 void Search::addTag(const QString &data)
