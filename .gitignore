@@ -5,3 +5,7 @@
 /build-*/*
 Makefile
 /DelegateExample/build-DelegateExample-Desktop
+/QGraphicsViewTest/build-QGraphicsViewTest-Desktop
+/QGraphicsViewTest/QGraphicsViewTest/*.yC8336
+/QGraphicsViewTest/QGraphicsViewTest/*.user
+/QGraphicsViewTest/QGraphicsViewTest/*.pro
