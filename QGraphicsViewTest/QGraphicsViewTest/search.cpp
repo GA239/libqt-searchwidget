@@ -3,6 +3,8 @@
 #include <QResizeEvent>
 #include <QPushButton>
 
+#include <QAbstractItemView>
+
 Search::Search(QWidget *parent) : QWidget(parent)
 {
     this->initScene();
@@ -37,12 +39,18 @@ void Search::initScene()
     _lineEdit->resize((this->size().width() - _indent)/_scaleFactor,25);
     _currentTagPoint = QPoint(0,_lineEdit->height() * _scaleFactor + _indent);
 
+    QStringList wordList;
+    wordList << "C++" << "C#" << "php" << "qt";
+
+    _completer = new QCompleter(wordList,_lineEdit);
+    _completer->setCaseSensitivity(Qt::CaseInsensitive);
+    _completer->setCompletionMode(QCompleter::InlineCompletion);
+    _lineEdit->setCompleter(_completer);
+
     connect(_lineEdit, SIGNAL(returnPressed()), SLOT(addTag()));
 
     _scene->addWidget(_lineEdit);
     _scene->items()[0]->setScale(_scaleFactor);
-
-    //scene->addPixmap(QPixmap("c:/Users/AG/Downloads/kak_narisovat_sticha.jpg"));
 }
 
 /**
@@ -76,20 +84,22 @@ void Search::addTag()
     QString data = _lineEdit->text();
     if(!data.isEmpty())
     {
-        _lineEdit->clear();
         addTag(data);
+        _lineEdit->clear();
     }
 }
 
 void Search::resizeEvent(QResizeEvent *event)
 {
     event->accept();
+
     _view->resize(this->size());
     _lineEdit->resize((this->size().width() - _indent)/_scaleFactor,25);
 
-    // сцена немного трясётся при масштабирвоании
     QRect r = _view->rect();
     r.setHeight(r.height() - _indent);
     r.setWidth(r.width() - _indent);
+
+    // сцена немного трясётся при масштабирвоании
     _scene->setSceneRect(r);
 }

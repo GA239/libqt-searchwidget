@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QWidget>
 #include <QLineEdit>
+#include <QStringListModel>
+#include <QCompleter>
 
 #include "qgraphicsviewtest.h"
 #include "mytagitem.h"
@@ -20,10 +22,11 @@ public:
     void addTag(const QString &data);
 
 
-    QGraphicsScene* _scene;
+    QGraphicsScene*     _scene;
     QGraphicsViewTest*  _view;
-    QPoint _currentTagPoint;
-    QLineEdit* _lineEdit;
+    QPoint              _currentTagPoint;
+    QLineEdit*          _lineEdit;
+    QCompleter*         _completer;
 
     int _indent;
     int _scaleFactor;
@@ -33,6 +36,7 @@ signals:
 
 public slots:
     void addTag();
+
 };
 
 #endif // SEARCH_H
