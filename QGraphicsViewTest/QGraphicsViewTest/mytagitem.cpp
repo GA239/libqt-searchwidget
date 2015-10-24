@@ -1,15 +1,15 @@
 #include "mytagitem.h"
 
-MyTagItem::MyTagItem(QPoint position, const QString& data)
+MyTagItem::MyTagItem(QPoint position, const QString& data) //todo: все параметры в конструктор
 {
     _position = position;
     _data = data;
     _font = QFont("times",36);
-    _height = 50;
     _thickness = 3;
 
-    _width = _font.pointSize() * _data.size();
-
+    QFontMetrics metrics(_font);
+    _width = metrics.width(_data) + 10;
+    _height = metrics.height();
 }
 
 QRectF MyTagItem::boundingRect() const
@@ -25,6 +25,7 @@ void MyTagItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
     QTextOption option;
     option.setAlignment(Qt::AlignCenter);
+    option.setAlignment(Qt::AlignHCenter);
 
     painter->setFont(_font);
     painter->setPen(QPen(Qt::blue));
@@ -35,7 +36,7 @@ void MyTagItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 void MyTagItem::setFont(QFont font)
 {
     _font = font;
-    _width = _font.pointSize() * _data.size();
+    _width = (_font.pointSize() * _data.size());
 }
 
 void MyTagItem::setThickness(int thickness)
@@ -46,6 +47,11 @@ void MyTagItem::setThickness(int thickness)
 void MyTagItem::setHeight(int height)
 {
     _height = height;
+}
+
+void MyTagItem::setPos(QPoint pos)
+{
+    _position = pos;
 }
 
 int MyTagItem::getWidth()

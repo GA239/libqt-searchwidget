@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QLineEdit>
 
 #include "qgraphicsviewtest.h"
 #include "mytagitem.h"
@@ -19,13 +20,15 @@ public:
     void addTag(const QString &data);
 
 
-    QGraphicsScene* scene;
-    QGraphicsViewTest*  view;
-    QPoint currentTagPoint;
+    QGraphicsScene* _scene;
+    QGraphicsViewTest*  _view;
+    QPoint _currentTagPoint;
+    QLineEdit* _lineEdit;
+
     int _indent;
+    int _scaleFactor;
 
-    int dataval;
-
+    //TRASH
 signals:
 
 public slots:
