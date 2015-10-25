@@ -32,6 +32,7 @@ SearchWidget::SearchWidget(QWidget *parent, bool defaultFont) : QWidget(parent)
         font = QFont();
     }
     searchLine->setFont(font);
+
     //completer initialization
     completer = new TagCustomCompleter(this);
     completer->setWidget(this);
@@ -45,6 +46,7 @@ SearchWidget::SearchWidget(QWidget *parent, bool defaultFont) : QWidget(parent)
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     completer->setWrapAround(false);
     searchLine->setCompleter(completer);
+
     //close/erase button
     close_btn = new QTagLabelButton(frame,defaultFont);
     close_btn->setFontHeight(fontHeight);
