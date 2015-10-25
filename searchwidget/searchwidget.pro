@@ -2,15 +2,15 @@ QT       += core widgets sql
 
 TEMPLATE = lib
 
-#*** graphao modelue ***
-DEPENDPATH +=  ../../core/core
-INCLUDEPATH +=  ../../core/core
+#*** SynapsCore ***
 CONFIG(debug, debug|release) {
-    LIBS+= -L../../core/core/debug -lcore
+    LIBS+= -L../../synapscore/src/debug -lcore
 }
 CONFIG(release, debug|release) {
-    LIBS+= -L../../core/core/release -lcore
+    LIBS+= -L../../synapscore/src/release -lcore
 }
+DEPENDPATH +=  . ../../synapscore/src
+INCLUDEPATH +=  . ../../synapscore/src
 
 SOURCES += \
     searchwidget.cpp \
