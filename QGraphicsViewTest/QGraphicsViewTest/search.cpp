@@ -16,6 +16,7 @@ Search::Search(QWidget *parent) : QWidget(parent)
 
     this->setLayout(&layout);
     _lineEdit->setFocus();
+
 }
 
 Search::~Search()
@@ -63,9 +64,14 @@ void Search::initScene()
 void Search::addTag(const QString &data)
 {
     //adding a new tag
-    MyTagItem* tag = new MyTagItem(_currentTagPoint,data);
+
+    //MyTagItem* tag = new MyTagItem(_currentTagPoint,data);
+    mySecondTag* tag = new mySecondTag(_currentTagPoint,data);
+
     _scene->addItem(tag);
-    connect(tag, SIGNAL(delnode(MyTagItem*)), this, SLOT(removeNode(MyTagItem*)));
+
+    //connect(tag, SIGNAL(delnode(MyTagItem*)), this, SLOT(removeNode(MyTagItem*)));
+    connect(tag, SIGNAL(delnode(mySecondTag*)), this, SLOT(removeSecondNode(mySecondTag*)));
 
     //Calculation of positions for the next tag:
     int newx = _currentTagPoint.x() + tag->getWidth() + _indent;
@@ -94,7 +100,12 @@ void Search::addTag()
 void Search::removeNode(MyTagItem* node)
 {
     _scene->removeItem(node);
-    node->deleteLater();
+    //node->deleteLater();
+}
+
+void Search::removeSecondNode(mySecondTag *node)
+{
+    _scene->removeItem(node);
 }
 
 void Search::resizeEvent(QResizeEvent *event)

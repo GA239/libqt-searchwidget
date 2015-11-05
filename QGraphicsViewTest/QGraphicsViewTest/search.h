@@ -9,6 +9,7 @@
 
 #include "qgraphicsviewtest.h"
 #include "mytagitem.h"
+#include "mysecondtag.h"
 
 class Search : public QWidget
 {
@@ -37,6 +38,7 @@ signals:
 public slots:
     void addTag();
     void removeNode(MyTagItem *node);
+    void removeSecondNode(mySecondTag* node);
 
 };
 

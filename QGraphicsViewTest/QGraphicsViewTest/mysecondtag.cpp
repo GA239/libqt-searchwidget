@@ -1,8 +1,12 @@
-#include "mytagitem.h"
-
+#include "mysecondtag.h"
 #include <QApplication>
 
-MyTagItem::MyTagItem(QPoint position, const QString& data) //todo: все параметры в конструктор
+mySecondTag::mySecondTag(QObject *parent) : QObject(parent)
+{
+
+}
+
+mySecondTag::mySecondTag(QPoint position, const QString &data, QObject *parent) //todo: все параметры в конструктор
 {
     _position = position;
     _data = data;
@@ -12,15 +16,14 @@ MyTagItem::MyTagItem(QPoint position, const QString& data) //todo: все параметры
     QFontMetrics metrics(_font);
     _width = metrics.width(_data) + 10;
     _height = metrics.height();
-
 }
 
-QRectF MyTagItem::boundingRect() const
+QRectF mySecondTag::boundingRect() const
 {
     return QRectF(_position,QSizeF(_width,_height));
 }
 
-void MyTagItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+void mySecondTag::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->save();
     painter->setPen(QPen(Qt::red,_thickness));
@@ -36,48 +39,48 @@ void MyTagItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     painter->restore();
 }
 
-void MyTagItem::mousePressEvent(QGraphicsSceneMouseEvent *pe)
+
+void mySecondTag::mousePressEvent(QGraphicsSceneMouseEvent *pe)
 {
     //QApplication::setOverrideCursor(Qt::PointingHandCursor);
     //QGraphicsItem::mousePressEvent(pe);
     emit delnode(this);
 }
 
-void MyTagItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *pe)
+void mySecondTag::mouseReleaseEvent(QGraphicsSceneMouseEvent *pe)
 {
-    QApplication::restoreOverrideCursor();
-    QGraphicsItem::mouseReleaseEvent(pe);
+    //QApplication::restoreOverrideCursor();
+    //QGraphicsItem::mouseReleaseEvent(pe);
     //emit delnode(this);
 }
 
-void MyTagItem::setFont(QFont font)
+void mySecondTag::setFont(QFont font)
 {
     _font = font;
     _width = (_font.pointSize() * _data.size());
 }
 
-void MyTagItem::setThickness(int thickness)
+void mySecondTag::setThickness(int thickness)
 {
     _thickness = thickness;
 }
 
-void MyTagItem::setHeight(int height)
+void mySecondTag::setHeight(int height)
 {
     _height = height;
 }
 
-void MyTagItem::setPos(QPoint pos)
+void mySecondTag::setPos(QPoint pos)
 {
     _position = pos;
 }
 
-int MyTagItem::getWidth()
+int mySecondTag::getWidth()
 {
     return _width;
 }
 
-int MyTagItem::getHeight()
+int mySecondTag::getHeight()
 {
     return _height;
 }
-

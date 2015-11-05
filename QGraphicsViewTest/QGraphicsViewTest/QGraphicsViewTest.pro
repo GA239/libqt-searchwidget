@@ -15,9 +15,11 @@ TEMPLATE = app
 SOURCES += main.cpp \
     qgraphicsviewtest.cpp \
     search.cpp \
-    mytagitem.cpp
+    mytagitem.cpp \
+    mysecondtag.cpp
 
 HEADERS  += \
     qgraphicsviewtest.h \
     search.h \
-    mytagitem.h
+    mytagitem.h \
+    mysecondtag.h
