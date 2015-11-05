@@ -1,21 +1,24 @@
 QT       += core widgets sql
 
 TEMPLATE = lib
-DEPENDPATH +=  ../../models
-INCLUDEPATH +=  ../../models
 
-# Input
+#*** SynapsCore ***
+CONFIG(debug, debug|release) {
+    LIBS+= -L../../synapscore/src/debug -lcore
+}
+CONFIG(release, debug|release) {
+    LIBS+= -L../../synapscore/src/release -lcore
+}
+DEPENDPATH +=  . ../../synapscore/src
+INCLUDEPATH +=  . ../../synapscore/src
+
 SOURCES += \
     searchwidget.cpp \
     qtaglabelbutton.cpp \
     tagcompleteritemdelegate.cpp \
     tagcustomcompleter.cpp \
     tageventfilter.cpp \
-    flowlayout.cpp \
-    fileicons.cpp \
-    ../../models/graphproxymodel.cpp \
-    ../../models/basemodel.cpp \
-    ../../models/database.cpp
+    flowlayout.cpp
 
 
 HEADERS += \
@@ -24,13 +27,7 @@ HEADERS += \
     tagcompleteritemdelegate.h \
     tagcustomcompleter.h \
     tageventfilter.h \
-    flowlayout.h \
-    fileicons.h \
-    ../../models/graphproxymodel.h \
-    ../../models/basemodel.h \
-    ../../models/database.h
-
-    fileicons.h \
+    flowlayout.h
 
 
 DEFINES += SEARCHWIDGET
