@@ -36,6 +36,7 @@ signals:
 
 public slots:
     void addTag();
+    void removeNode(MyTagItem *node);
 
 };
 

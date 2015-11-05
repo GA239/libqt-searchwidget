@@ -1,5 +1,7 @@
 #include "mytagitem.h"
 
+#include <QApplication>
+
 MyTagItem::MyTagItem(QPoint position, const QString& data) //todo: все параметры в конструктор
 {
     _position = position;
@@ -31,6 +33,20 @@ void MyTagItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     painter->setPen(QPen(Qt::blue));
     painter->drawText(this->boundingRect(),_data,option);
     painter->restore();
+}
+
+void MyTagItem::mousePressEvent(QGraphicsSceneMouseEvent *pe)
+{
+    //QApplication::setOverrideCursor(Qt::PointingHandCursor);
+    //QGraphicsItem::mousePressEvent(pe);
+    emit delnode(this);
+}
+
+void MyTagItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *pe)
+{
+    QApplication::restoreOverrideCursor();
+    QGraphicsItem::mouseReleaseEvent(pe);
+    //emit delnode(this);
 }
 
 void MyTagItem::setFont(QFont font)

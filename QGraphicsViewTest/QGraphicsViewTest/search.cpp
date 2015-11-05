@@ -51,6 +51,7 @@ void Search::initScene()
 
     _scene->addWidget(_lineEdit);
     _scene->items()[0]->setScale(_scaleFactor);
+
 }
 
 /**
@@ -64,6 +65,7 @@ void Search::addTag(const QString &data)
     //adding a new tag
     MyTagItem* tag = new MyTagItem(_currentTagPoint,data);
     _scene->addItem(tag);
+    connect(tag, SIGNAL(delnode(MyTagItem*)), this, SLOT(removeNode(MyTagItem*)));
 
     //Calculation of positions for the next tag:
     int newx = _currentTagPoint.x() + tag->getWidth() + _indent;
@@ -87,6 +89,12 @@ void Search::addTag()
         addTag(data);
         _lineEdit->clear();
     }
+}
+
+void Search::removeNode(MyTagItem* node)
+{
+    _scene->removeItem(node);
+    node->deleteLater();
 }
 
 void Search::resizeEvent(QResizeEvent *event)
