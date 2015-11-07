@@ -11,6 +11,10 @@
 #include "mytagitem.h"
 #include "mysecondtag.h"
 
+
+#include "mycompleter.h"
+
+
 class Search : public QWidget
 {
     Q_OBJECT
@@ -27,10 +31,10 @@ public:
     QGraphicsViewTest*  _view;
     QPoint              _currentTagPoint;
     QLineEdit*          _lineEdit;
-    QCompleter*         _completer;
+//    QCompleter*         _completer;
+    MyCompleter*         _completer;
 
     int _indent;
-    int _scaleFactor;
 
     //TRASH
 signals:

@@ -152,7 +152,8 @@ QString SearchWidget::getSearchString()
 void SearchWidget::insertSelection(QModelIndex curIndex)
 {
     QString str = curIndex.data().toString();
-    QModelIndex index = ((GraphProxyModel*)itemModel)->indexByName(str,0);
+    //QModelIndex index = (itemModel)->indexByName(str,0);
+    QModelIndex index = (itemModel)->index(1,1);
     QItemSelection selection = QItemSelection(index,index);
     selectionModel()->select(selection, QItemSelectionModel::Select);
 }

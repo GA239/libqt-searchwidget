@@ -11,7 +11,7 @@
 #include "tagcompleteritemdelegate.h"
 #include "tageventfilter.h"
 #include "flowlayout.h"
-#include "graphproxymodel.h"
+//#include "graphproxymodel.h"
 
 
 class SEARCHWIDGET_COMMON_DLLSPEC SearchWidget : public QWidget

@@ -4,15 +4,21 @@
 #include <QPushButton>
 
 #include <QAbstractItemView>
+#include "tagcompleteritemdelegate.h"
+
 
 Search::Search(QWidget *parent) : QWidget(parent)
 {
-    this->initScene();
+    _scene = new  QGraphicsScene();
     _view = new  QGraphicsViewTest(_scene);
     _view->setRenderHint(QPainter::Antialiasing,true);
 
+    this->initScene();
+
+
     QVBoxLayout layout;
     layout.addWidget(_view);
+    layout.addWidget(_lineEdit);
 
     this->setLayout(&layout);
     _lineEdit->setFocus();
@@ -31,27 +37,27 @@ Search::~Search()
  */
 void Search::initScene()
 {
-    _scene = new  QGraphicsScene();
     _indent = 7;
-    _scaleFactor = 3;
-
     _lineEdit = new QLineEdit();
-    _lineEdit->setFont(QFont("times",10));
-    _lineEdit->resize((this->size().width() - _indent)/_scaleFactor,25);
-    _currentTagPoint = QPoint(0,_lineEdit->height() * _scaleFactor + _indent);
 
-    QStringList wordList;
-    wordList << "C++" << "C#" << "php" << "qt";
+    _lineEdit->setStyleSheet("border: 3px solid gray; border-radius: 10px; padding: 5 8px;");
+    _lineEdit->resize((this->size().width() - _indent),100);
 
-    _completer = new QCompleter(wordList,_lineEdit);
-    _completer->setCaseSensitivity(Qt::CaseInsensitive);
-    _completer->setCompletionMode(QCompleter::InlineCompletion);
-    _lineEdit->setCompleter(_completer);
+    _lineEdit->setFont(QFont("times",30));
+    _currentTagPoint = QPoint(0,_lineEdit->height() + _indent);
 
     connect(_lineEdit, SIGNAL(returnPressed()), SLOT(addTag()));
 
-    _scene->addWidget(_lineEdit);
-    _scene->items()[0]->setScale(_scaleFactor);
+    QStringList wordList;
+    wordList << "C++looooooooooooooooooooon" << "C#" << "php" << "qt";
+
+    _completer = new MyCompleter(wordList,this);
+    _completer->setCompletionMode(QCompleter::PopupCompletion);
+
+    TagCompleterItemDelegate* tagCompleterItemDelegate = new TagCompleterItemDelegate(this, true);
+
+    _completer->popup()->setItemDelegate(tagCompleterItemDelegate);
+    _lineEdit->setCompleter(_completer);
 
 }
 
@@ -113,7 +119,7 @@ void Search::resizeEvent(QResizeEvent *event)
     event->accept();
 
     _view->resize(this->size());
-    _lineEdit->resize((this->size().width() - _indent)/_scaleFactor,25);
+    _lineEdit->resize((this->size().width()),100);
 
     QRect r = _view->rect();
     r.setHeight(r.height() - _indent);

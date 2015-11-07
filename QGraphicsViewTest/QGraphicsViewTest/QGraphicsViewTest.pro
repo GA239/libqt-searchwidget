@@ -16,10 +16,14 @@ SOURCES += main.cpp \
     qgraphicsviewtest.cpp \
     search.cpp \
     mytagitem.cpp \
-    mysecondtag.cpp
+    mysecondtag.cpp \
+    tagcompleteritemdelegate.cpp \
+    mycompleter.cpp
 
 HEADERS  += \
     qgraphicsviewtest.h \
     search.h \
     mytagitem.h \
-    mysecondtag.h
+    mysecondtag.h \
+    tagcompleteritemdelegate.h \
+    mycompleter.h
