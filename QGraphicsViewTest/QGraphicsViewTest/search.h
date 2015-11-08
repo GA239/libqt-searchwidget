@@ -5,15 +5,14 @@
 #include <QWidget>
 #include <QLineEdit>
 #include <QStringListModel>
-#include <QCompleter>
 
-#include "qgraphicsviewtest.h"
-#include "mytagitem.h"
+#include "customraphicsview.h"
+#include "customcompleter.h"
 #include "mysecondtag.h"
 
-
-#include "mycompleter.h"
-
+#define FONT_SIZE 30
+#define INDENT 7
+#define LINE_EDIT_HEIGHT 90
 
 class Search : public QWidget
 {
@@ -23,26 +22,19 @@ public:
     virtual ~Search();
     void resizeEvent ( QResizeEvent * event );
 
-    void initScene();
+    void initLineEdit();
     void addTag(const QString &data);
 
 
     QGraphicsScene*     _scene;
-    QGraphicsViewTest*  _view;
+    CustomGraphicsView*  _view;
     QPoint              _currentTagPoint;
     QLineEdit*          _lineEdit;
-//    QCompleter*         _completer;
-    MyCompleter*         _completer;
-
-    int _indent;
-
-    //TRASH
-signals:
+    CustomCompleter*    _completer;
 
 public slots:
     void addTag();
-    void removeNode(MyTagItem *node);
-    void removeSecondNode(mySecondTag* node);
+    void removeNode(mySecondTag* node);
 
 };
 

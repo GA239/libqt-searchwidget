@@ -1,5 +1,5 @@
 #include <QApplication>
-#include "qgraphicsviewtest.h"
+#include "customraphicsview.h"
 #include "search.h"
 
 int main(int argc, char *argv[])
