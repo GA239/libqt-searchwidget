@@ -4,8 +4,6 @@
 #include <QPushButton>
 
 #include <QAbstractItemView>
-#include "tagcompleteritemdelegate.h"
-
 
 Search::Search(QWidget *parent) : QWidget(parent)
 {
@@ -13,6 +11,7 @@ Search::Search(QWidget *parent) : QWidget(parent)
 
     _view = new  CustomGraphicsView(_scene);
     _view->setRenderHint(QPainter::Antialiasing,true);
+    _tagCompleterItemDelegate = new TagCompleterItemDelegate(this,QFont("times",FONT_SIZE));
     this->initLineEdit();
 
     _currentTagPoint = QPoint(0,_lineEdit->height() + INDENT);
@@ -41,17 +40,10 @@ void Search::initLineEdit()
     _lineEdit->setStyleSheet("border: 3px solid gray; border-radius: 10px; padding: 5 8px;");
     _lineEdit->resize((this->size().width() - INDENT),LINE_EDIT_HEIGHT);
 
-    QFont font = QFont("times",FONT_SIZE);
-    _lineEdit->setFont(font);
-
-    QStringList wordList;
-    wordList << "C++" << "C#" << "php" << "qt";
-    _completer = new CustomCompleter(wordList,this);
-
-    TagCompleterItemDelegate* tagCompleterItemDelegate = new TagCompleterItemDelegate(this,font);
+    _lineEdit->setFont(QFont("times",FONT_SIZE));
+    //    _completer = new CustomCompleter(list,this);
+    _completer = new CustomCompleter(this);
     _completer->setCompletionMode(QCompleter::PopupCompletion);
-    _completer->popup()->setItemDelegate(tagCompleterItemDelegate);
-
     _lineEdit->setCompleter(_completer);
 
     connect(_lineEdit, SIGNAL(returnPressed()), SLOT(addTag()));
@@ -83,6 +75,18 @@ void Search::addTag(const QString &data)
         newx = _currentTagPoint.x() + tag-> getWidth() + INDENT;
         _currentTagPoint.setX(newx);
     }
+}
+
+void Search::setModel(QAbstractItemModel *model)
+{
+    _model = model;
+    _completer->setModel(_model);
+    _selModel = new QItemSelectionModel(_model);
+
+    //connect( selModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(onItemSelected(QItemSelection,QItemSelection)) );
+    _completer->popup()->setItemDelegate(_tagCompleterItemDelegate); //Must be set after every time the model is set
+    connect(_completer, SIGNAL(activated(QModelIndex)),this, SLOT(insertSelection(QModelIndex)));
+    return;
 }
 /**
  * @brief Search::addTag
@@ -130,4 +134,26 @@ void Search::resizeEvent(QResizeEvent *event)
 
     // сцена немного трясётся при масштабирвоании
     _scene->setSceneRect(r);
+}
+
+/**
+ * @brief SearchWidget::insertSelection
+ * @param current index
+ */
+void Search::insertSelection(QModelIndex curIndex)
+{
+    QString str = curIndex.data().toString();
+    //QModelIndex index = (itemModel)->indexByName(str,0);
+    QModelIndex index = (_model)->index(1,1);
+    QItemSelection selection = QItemSelection(index,index);
+    this->selectionModel()->select(selection, QItemSelectionModel::Select);
+}
+
+/**
+ * @brief SearchWidget::selectionModel
+ * @return
+ */
+QItemSelectionModel* Search::selectionModel() const
+{
+    return this->_selModel;
 }

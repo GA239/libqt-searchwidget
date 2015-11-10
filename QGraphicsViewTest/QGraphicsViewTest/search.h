@@ -5,10 +5,12 @@
 #include <QWidget>
 #include <QLineEdit>
 #include <QStringListModel>
+#include <QItemSelectionModel>
 
 #include "customraphicsview.h"
 #include "customcompleter.h"
 #include "mysecondtag.h"
+#include "tagcompleteritemdelegate.h"
 
 #define FONT_SIZE 30
 #define INDENT 7
@@ -25,17 +27,23 @@ public:
     void initLineEdit();
     void addTag(const QString &data);
 
+    void setModel(QAbstractItemModel *model);
+    QItemSelectionModel* selectionModel() const;
 
-    QGraphicsScene*     _scene;
-    CustomGraphicsView*  _view;
-    QPoint              _currentTagPoint;
-    QLineEdit*          _lineEdit;
-    CustomCompleter*    _completer;
+
+    QGraphicsScene*             _scene;
+    CustomGraphicsView*         _view;
+    QPoint                      _currentTagPoint;
+    QLineEdit*                  _lineEdit;
+    CustomCompleter*            _completer;
+    QAbstractItemModel*         _model;
+    QItemSelectionModel*        _selModel;
+    TagCompleterItemDelegate*   _tagCompleterItemDelegate;
 
 public slots:
     void addTag();
     void removeNode(mySecondTag* node);
-
+    void insertSelection(QModelIndex curIndex);
 };
 
 #endif // SEARCH_H

@@ -12,3 +12,9 @@ CustomCompleter::CustomCompleter(const QStringList &list, QObject* parent) :
 {
 
 }
+
+CustomCompleter::CustomCompleter(QObject *parent):
+    QCompleter(parent)
+{
+
+}

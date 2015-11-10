@@ -18,12 +18,16 @@ TagCompleterItemDelegate::TagCompleterItemDelegate(QObject *parent, QFont font)
  */
 void TagCompleterItemDelegate::paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
-
     // focus
-    painter->setPen(QPen(QColor(0xb0,0xb0,0xb0)));
     if (option.state & QStyle::State_HasFocus)
     {
+        painter->fillRect(option.rect, QColor(0xb0,0xb0,0xb0));
         painter->setPen(QPen(QColor(0,0,0)));
+    }
+    else
+    {
+        painter->fillRect(option.rect, Qt::white);
+        painter->setPen(QPen(QColor(0xb0,0xb0,0xb0)));
     }
     QString title = index.data(Qt::DisplayRole).toString();
     QRect r = option.rect.adjusted(5, 0, 100, -10);
@@ -47,5 +51,5 @@ void TagCompleterItemDelegate::paint ( QPainter * painter, const QStyleOptionVie
  */
 QSize TagCompleterItemDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
-    return QSize(100,60);
+    return QSize(100,65);
 }
