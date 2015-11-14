@@ -19,7 +19,10 @@ class CustomCompleter : public QCompleter
        CustomCompleter(QAbstractItemModel * model, QObject * parent = 0);
        CustomCompleter(const QStringList  &list, QObject * parent = 0);
        CustomCompleter(QObject * parent = 0);
+       bool eventFilter(QObject *o, QEvent *e);
 
+signals:
+       bool completeFunished();
 
 private:
 };

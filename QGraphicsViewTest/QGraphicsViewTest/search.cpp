@@ -41,12 +41,12 @@ void Search::initLineEdit()
     _lineEdit->resize((this->size().width() - INDENT),LINE_EDIT_HEIGHT);
 
     _lineEdit->setFont(QFont("times",FONT_SIZE));
-    //    _completer = new CustomCompleter(list,this);
     _completer = new CustomCompleter(this);
     _completer->setCompletionMode(QCompleter::PopupCompletion);
     _lineEdit->setCompleter(_completer);
 
     connect(_lineEdit, SIGNAL(returnPressed()), SLOT(addTag()));
+    connect(_completer, SIGNAL(completeFunished()),_lineEdit, SLOT(clear()));
 }
 
 /**
