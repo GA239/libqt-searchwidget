@@ -1,45 +1,55 @@
 #include "tagcompleteritemdelegate.h"
 #include <QFontDatabase>
 
-TagCompleterItemDelegate::TagCompleterItemDelegate(QObject *parent, bool defaultFont)
+TagCompleterItemDelegate::TagCompleterItemDelegate(QObject *parent, QFont font)
         :QStyledItemDelegate(parent)
 {
-    this->defaultFont = defaultFont;
-    if(!defaultFont)
+    _font = font;
+}
+
+/**
+ * @brief TagCompleterItemDelegate::paint
+ *
+ * function to redraw the list
+ *
+ * @param painter
+ * @param option
+ * @param index
+ */
+void TagCompleterItemDelegate::paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
+{
+    // focus
+    if (option.state & QStyle::State_HasFocus)
     {
-        int id = QFontDatabase::addApplicationFont(":/fonts/fonts/segoeui.ttf");
-        QString family = QFontDatabase::applicationFontFamilies(id).at(0);
-        font1 = QFont(family, 22, QFont::Normal,false);
-        font2 = QFont(family, 9, QFont::Normal,false);
+        painter->fillRect(option.rect, QColor(0xb0,0xb0,0xb0));
+        painter->setPen(QPen(QColor(0,0,0)));
     }
     else
     {
-        font1 = QFont();
-        font2 = QFont();
+        painter->fillRect(option.rect, Qt::white);
+        painter->setPen(QPen(QColor(0xb0,0xb0,0xb0)));
     }
-}
-
-void TagCompleterItemDelegate::paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
-{
-
     QString title = index.data(Qt::DisplayRole).toString();
-    QString num = index.data(Qt::UserRole+10).toString();
     QRect r = option.rect.adjusted(5, 0, 100, -10);
-    QPen pen1(QColor(0,0,0));
-    painter->setPen(pen1);
-    painter->setFont(QFont("times",24));
+    painter->setFont(_font);
     painter->drawText(r.left(), r.top()-10, r.width() + 45, r.height(), Qt::AlignBottom|Qt::AlignLeft, title, &r);
 
-    /*
+
+/*
     QPen pen2(QColor(0xb0,0xb0,0xb0));
     painter->setPen(pen2);
-    painter->setFont(font2);
+    painter->setFont(QFont("times",12));
     r = option.rect.adjusted(5, 16+30, 0, 0);
     painter->drawText(r.left(), r.top(), r.width()-120, r.height(), Qt::AlignLeft|Qt::TextWordWrap, num + " документов", &r);
-    */
+*/
 }
-
+/**
+ * @brief TagCompleterItemDelegate::sizeHint
+ * @param option
+ * @param index
+ * @return
+ */
 QSize TagCompleterItemDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
-    return QSize(100,60);
+    return QSize(100,65);
 }

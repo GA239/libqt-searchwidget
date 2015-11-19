@@ -13,17 +13,15 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    qgraphicsviewtest.cpp \
     search.cpp \
-    mytagitem.cpp \
     mysecondtag.cpp \
     tagcompleteritemdelegate.cpp \
-    mycompleter.cpp
+    customcompleter.cpp \
+    customgraphicsview.cpp
 
 HEADERS  += \
-    qgraphicsviewtest.h \
     search.h \
-    mytagitem.h \
     mysecondtag.h \
     tagcompleteritemdelegate.h \
-    mycompleter.h
+    customcompleter.h \
+    customraphicsview.h
