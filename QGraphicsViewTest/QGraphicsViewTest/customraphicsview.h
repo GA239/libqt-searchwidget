@@ -3,6 +3,8 @@
 
 #include <QGraphicsView>
 #include <QObject>
+#include "tag.h"
+
 
 ///
 /// \brief The CustomGraphicsView class
@@ -14,6 +16,14 @@ class CustomGraphicsView : public QGraphicsView
 {
 public:
     CustomGraphicsView(QGraphicsScene* pScene, QWidget *pwgt=0);
+    void itemMoved(void);
+
+protected:
+    void timerEvent(QTimerEvent *event);
+    void drawBackground(QPainter *painter, const QRectF &rect);
+
+private:
+    int timerId;
 };
 
 #endif // CUSTOMGRAPHICSVIEW_H

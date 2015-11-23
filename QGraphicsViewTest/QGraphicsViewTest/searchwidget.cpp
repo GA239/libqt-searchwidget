@@ -1,11 +1,11 @@
-#include "search.h"
+#include "searchwidget.h"
 #include <QVBoxLayout>
 #include <QResizeEvent>
 #include <QPushButton>
 
 #include <QAbstractItemView>
 
-Search::Search(QWidget *parent) : QWidget(parent)
+SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
 {
     _scene = new  QGraphicsScene();
 
@@ -14,7 +14,7 @@ Search::Search(QWidget *parent) : QWidget(parent)
     _tagCompleterItemDelegate = new TagCompleterItemDelegate(this,QFont("times",FONT_SIZE));
     this->initLineEdit();
 
-    _currentTagPoint = QPoint(0,_lineEdit->height() + INDENT);
+    _currentTagPoint = QPointF(0., _lineEdit->height() + INDENT);
 
     QVBoxLayout layout;
     layout.addWidget(_view);
@@ -25,7 +25,7 @@ Search::Search(QWidget *parent) : QWidget(parent)
 
 }
 
-Search::~Search()
+SearchWidget::~SearchWidget()
 {
     delete _scene;
     delete _view;
@@ -34,7 +34,7 @@ Search::~Search()
  * @brief Search::initLineEdit
  * initializes the lineEdit when you first create the widget
  */
-void Search::initLineEdit()
+void SearchWidget::initLineEdit()
 {
     _lineEdit = new QLineEdit();
     _lineEdit->setStyleSheet("border: 3px solid gray; border-radius: 10px; padding: 5 8px;");
@@ -55,13 +55,13 @@ void Search::initLineEdit()
  *
  * @param data: text data
  */
-void Search::addTag(const QString &data)
+void SearchWidget::addTag(const QString &data)
 {
     //adding a new tag
-    mySecondTag* tag = new mySecondTag(_currentTagPoint,data);
+    Tag* tag = new Tag(_currentTagPoint, data, this->_view);
 
     _scene->addItem(tag);
-    connect(tag, SIGNAL(delnode(mySecondTag*)), this, SLOT(removeNode(mySecondTag*)));
+    connect(tag, SIGNAL(delnode(Tag*)), this, SLOT(removeNode(Tag*)));
 
     //Calculation of positions for the next tag:
     int newx = _currentTagPoint.x() + tag->getWidth() + INDENT;
@@ -77,7 +77,7 @@ void Search::addTag(const QString &data)
     }
 }
 
-void Search::setModel(QAbstractItemModel *model)
+void SearchWidget::setModel(QAbstractItemModel *model)
 {
     _model = model;
     _completer->setModel(_model);
@@ -92,7 +92,7 @@ void Search::setModel(QAbstractItemModel *model)
  * @brief Search::addTag
  * It adds new tag to the scene
  */
-void Search::addTag()
+void SearchWidget::addTag()
 {
     QString data = _lineEdit->text();
     if(!data.isEmpty())
@@ -108,7 +108,7 @@ void Search::addTag()
  *
  * @param node - tag
  */
-void Search::removeNode(mySecondTag *node)
+void SearchWidget::removeNode(Tag *node)
 {
     _scene->removeItem(node);
     node->deleteLater();
@@ -121,7 +121,7 @@ void Search::removeNode(mySecondTag *node)
  *
  * @param event
  */
-void Search::resizeEvent(QResizeEvent *event)
+void SearchWidget::resizeEvent(QResizeEvent *event)
 {
     event->accept();
 
@@ -140,7 +140,7 @@ void Search::resizeEvent(QResizeEvent *event)
  * @brief SearchWidget::insertSelection
  * @param current index
  */
-void Search::insertSelection(QModelIndex curIndex)
+void SearchWidget::insertSelection(QModelIndex curIndex)
 {
     QString str = curIndex.data().toString();
     //QModelIndex index = (itemModel)->indexByName(str,0);
@@ -153,7 +153,16 @@ void Search::insertSelection(QModelIndex curIndex)
  * @brief SearchWidget::selectionModel
  * @return
  */
-QItemSelectionModel* Search::selectionModel() const
+QItemSelectionModel* SearchWidget::selectionModel() const
 {
     return this->_selModel;
+}
+
+/**
+ * @brief Handles the timer event: update tags on scene
+ * @param event
+ */
+void SearchWidget::timerEvent(QTimerEvent *event)
+{
+    return;
 }

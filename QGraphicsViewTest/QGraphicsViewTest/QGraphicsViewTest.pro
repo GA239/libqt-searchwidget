@@ -13,15 +13,15 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    search.cpp \
-    mysecondtag.cpp \
     tagcompleteritemdelegate.cpp \
     customcompleter.cpp \
-    customgraphicsview.cpp
+    customgraphicsview.cpp \
+    searchwidget.cpp \
+    tag.cpp
 
 HEADERS  += \
-    search.h \
-    mysecondtag.h \
     tagcompleteritemdelegate.h \
     customcompleter.h \
-    customraphicsview.h
+    customraphicsview.h \
+    searchwidget.h \
+    tag.h
