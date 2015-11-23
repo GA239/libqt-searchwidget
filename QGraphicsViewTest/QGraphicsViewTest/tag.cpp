@@ -70,13 +70,29 @@ void Tag::calculateForces()
     qreal yvel = 0;     // next iteration y ofset
     QRectF sceneRect = this->scene()->sceneRect();
 //! [2]Sum up all forces pushing this item away
+    foreach (QGraphicsItem *item, scene()->items())
+    {
+        Tag *tag = qgraphicsitem_cast<Tag *>(item);
+        if (!tag)
+            continue;
+
+        QPointF vec = mapToItem(tag, 0, 0);
+        qreal dx = vec.x();
+        qreal dy = vec.y();
+        double l = 2.0 * (dx * dx + dy * dy);
+        if (l > 0)
+        {
+            xvel += (dx * 150.0) / l;
+            yvel += (dy * 150.0) / l;
+        }
+    }
 //! [2]
 //! [3] Now subtract all forces pulling items together
 //! [3]
 //! [4] Calc force pulling items to top left corner
     QPointF vec = QPointF(sceneRect.left(), sceneRect.top());
-    xvel -= (this->pos().x() - vec.x())/10.;
-    yvel -= (this->pos().y() - vec.y())/30.;
+    xvel -= (this->pos().x() - vec.x())/30.;
+    yvel -= (this->pos().y() - vec.y())/10.;
 //! [4]
 //! [5] Check new position for remove jitter
     if (qAbs(xvel) < 0.1 && qAbs(yvel) < 0.1) {
@@ -101,7 +117,7 @@ bool Tag::advance()
         return false;
     }
     setPos(newNodePosition);
-    qDebug() << "mySecondTag::advance() -> new position x=" << newNodePosition.x() << ", y=" << newNodePosition.y();
+    //qDebug() << "mySecondTag::advance() -> new position x=" << newNodePosition.x() << ", y=" << newNodePosition.y();
     return true;
 }
 
@@ -116,7 +132,6 @@ QVariant Tag::itemChange(QGraphicsItem::GraphicsItemChange change, const QVarian
     switch (change) {
         case ItemPositionHasChanged: {
             this->view->itemMoved();
-            qDebug() << "need to move";
         } break;
         default:
             break;
