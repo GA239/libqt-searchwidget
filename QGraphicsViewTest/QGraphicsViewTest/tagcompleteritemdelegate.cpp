@@ -19,7 +19,7 @@ TagCompleterItemDelegate::TagCompleterItemDelegate(QObject *parent, QFont font)
 void TagCompleterItemDelegate::paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
     // focus
-    if (option.state & QStyle::State_HasFocus)
+    if ((option.state & QStyle::State_HasFocus) || (option.state &  QStyle::State_MouseOver))
     {
         painter->fillRect(option.rect, QColor(0xb0,0xb0,0xb0));
         painter->setPen(QPen(QColor(0,0,0)));
