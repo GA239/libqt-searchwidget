@@ -17,11 +17,15 @@ SOURCES += main.cpp \
     customcompleter.cpp \
     customgraphicsview.cpp \
     searchwidget.cpp \
-    tag.cpp
+    tag.cpp \
+    custompopup.cpp \
+    customlineedit.cpp
 
 HEADERS  += \
     tagcompleteritemdelegate.h \
     customcompleter.h \
     customraphicsview.h \
     searchwidget.h \
-    tag.h
+    tag.h \
+    custompopup.h \
+    customlineedit.h

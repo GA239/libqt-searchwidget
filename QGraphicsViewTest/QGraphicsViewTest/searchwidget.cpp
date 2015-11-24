@@ -4,6 +4,7 @@
 #include <QPushButton>
 
 #include <QAbstractItemView>
+#include <QCoreApplication>
 
 SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
 {
@@ -12,6 +13,7 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     _view = new  CustomGraphicsView(_scene);
     _view->setRenderHint(QPainter::Antialiasing,true);
     _tagCompleterItemDelegate = new TagCompleterItemDelegate(this,QFont("times",FONT_SIZE));
+
     this->initLineEdit();
 
     _currentTagPoint = QPointF(0., _lineEdit->height() + INDENT);
@@ -36,17 +38,20 @@ SearchWidget::~SearchWidget()
  */
 void SearchWidget::initLineEdit()
 {
-    _lineEdit = new QLineEdit();
+    _lineEdit = new CustomLineEdit();
     _lineEdit->setStyleSheet("border: 3px solid gray; border-radius: 10px; padding: 5 8px;");
     _lineEdit->resize((this->size().width() - INDENT),LINE_EDIT_HEIGHT);
 
     _lineEdit->setFont(QFont("times",FONT_SIZE));
     _completer = new CustomCompleter(this);
     _completer->setCompletionMode(QCompleter::PopupCompletion);
+    _popup = new CustomPopup(this);
+    _completer->setPopup(_popup);
     _lineEdit->setCompleter(_completer);
 
+    connect(_completer, SIGNAL(activated(QModelIndex)), this ,SLOT(addTagTromPopup(QModelIndex)));
+    connect(_lineEdit, SIGNAL(textChanged(QString)), SLOT(textWatcher()));
     connect(_lineEdit, SIGNAL(returnPressed()), SLOT(addTag()));
-    connect(_completer, SIGNAL(completeFunished()),_lineEdit, SLOT(clear()));
 }
 
 /**
@@ -98,7 +103,7 @@ void SearchWidget::addTag()
     if(!data.isEmpty())
     {
         addTag(data);
-        _lineEdit->clear();
+        this->cleanLineEdit();
     }
 }
 
@@ -149,6 +154,37 @@ void SearchWidget::insertSelection(QModelIndex curIndex)
     this->selectionModel()->select(selection, QItemSelectionModel::Select);
 }
 
+void SearchWidget::cleanLineEdit()
+{
+    _lineEdit->clear();
+}
+/**
+ * @brief SearchWidget::addTagTromPopup
+ *
+ * adds a tag with the data from the Completer with current index
+ *
+ * @param index
+ */
+void SearchWidget::addTagTromPopup(const QModelIndex &index)
+{
+    this->_completer->popup()->setCurrentIndex(index);
+    this->addTag();
+    this->_lineEdit->changeModificationPossibility();
+}
+/**
+ * @brief SearchWidget::textWatcher
+ *
+ * Following the lineedit and prohibit editing if needed
+ *
+ */
+void SearchWidget::textWatcher()
+{
+    if(this->_lineEdit->notAbleToModifie())
+    {
+        this->cleanLineEdit();
+    }
+}
+
 /**
  * @brief SearchWidget::selectionModel
  * @return
@@ -165,4 +201,9 @@ QItemSelectionModel* SearchWidget::selectionModel() const
 void SearchWidget::timerEvent(QTimerEvent *event)
 {
     return;
+}
+
+bool SearchWidget::eventFilter(QObject *watched, QEvent *event)
+{
+    return QObject::eventFilter(watched, event);
 }

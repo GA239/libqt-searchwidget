@@ -20,11 +20,6 @@ class CustomCompleter : public QCompleter
        CustomCompleter(const QStringList  &list, QObject * parent = 0);
        CustomCompleter(QObject * parent = 0);
        bool eventFilter(QObject *o, QEvent *e);
-
-signals:
-       bool completeFunished();
-
-private:
 };
 
 #endif // CustomCompleter_H

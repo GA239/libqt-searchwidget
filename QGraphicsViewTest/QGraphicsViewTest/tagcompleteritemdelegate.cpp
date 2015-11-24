@@ -1,12 +1,12 @@
 #include "tagcompleteritemdelegate.h"
 #include <QFontDatabase>
+#include <QEvent>
 
 TagCompleterItemDelegate::TagCompleterItemDelegate(QObject *parent, QFont font)
-        :QStyledItemDelegate(parent)
+        :QItemDelegate(parent)
 {
     _font = font;
 }
-
 /**
  * @brief TagCompleterItemDelegate::paint
  *
@@ -52,4 +52,28 @@ void TagCompleterItemDelegate::paint ( QPainter * painter, const QStyleOptionVie
 QSize TagCompleterItemDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
     return QSize(100,65);
+}
+
+/**
+ * @brief TagCompleterItemDelegate::editorEvent
+ *
+ * Rewrite  editing event handler
+ *
+ * @param event
+ * @param model
+ * @param option
+ * @param index
+ * @return
+ */
+bool TagCompleterItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index )
+{
+    Q_ASSERT(event);
+    Q_ASSERT(model);
+    /*
+    if (event->type() == QEvent::MouseButtonPress)
+    {
+      emit this->mouseButtonPressed(index);
+    }
+    */
+    return false;
 }

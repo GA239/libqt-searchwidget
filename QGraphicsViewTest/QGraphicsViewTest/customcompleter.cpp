@@ -12,13 +12,11 @@ CustomCompleter::CustomCompleter(QAbstractItemModel* model, QObject* parent) :
 CustomCompleter::CustomCompleter(const QStringList &list, QObject* parent) :
         QCompleter(list,parent)
 {
-
 }
 
 CustomCompleter::CustomCompleter(QObject *parent):
     QCompleter(parent)
 {
-
 }
 
 /**
@@ -32,19 +30,5 @@ CustomCompleter::CustomCompleter(QObject *parent):
  */
 bool CustomCompleter::eventFilter(QObject *o, QEvent *e)
 {
-    bool eventResuslt = QCompleter::eventFilter(o,e);
-    if(eventResuslt)
-     {
-         if(e->type() == QEvent::KeyPress)
-         {
-            QKeyEvent *ke = (QKeyEvent *)(e);
-            const int key = ke->key();
-
-            if ((key == Qt::Key_Return) || (key == Qt::Key_Enter))
-            {
-                 emit completeFunished();
-            }
-         }
-     }
-    return eventResuslt;
+    return QCompleter::eventFilter(o,e);
 }
