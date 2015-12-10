@@ -1,21 +1,21 @@
-#include "CustomCompleter.h"
+#include "LineEditCompleter.h"
 
 #include <QAbstractItemView>
 #include <QEvent>
 #include <QKeyEvent>
 
-CustomCompleter::CustomCompleter(QAbstractItemModel* model, QObject* parent) :
+LineEditCompleter::LineEditCompleter(QAbstractItemModel* model, QObject* parent) :
         QCompleter(model,parent)
 {
 }
 
-CustomCompleter::CustomCompleter(const QStringList &list, QObject* parent) :
+LineEditCompleter::LineEditCompleter(const QStringList &list, QObject* parent) :
         QCompleter(list,parent)
 {
 
 }
 
-CustomCompleter::CustomCompleter(QObject *parent):
+LineEditCompleter::LineEditCompleter(QObject *parent):
     QCompleter(parent)
 {
 
@@ -30,7 +30,7 @@ CustomCompleter::CustomCompleter(QObject *parent):
  * @param e
  * @return
  */
-bool CustomCompleter::eventFilter(QObject *o, QEvent *e)
+bool LineEditCompleter::eventFilter(QObject *o, QEvent *e)
 {
     bool eventResuslt = QCompleter::eventFilter(o,e);
     if(eventResuslt)

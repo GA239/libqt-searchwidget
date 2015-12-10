@@ -1,52 +1,48 @@
 #include "searchwidget.h"
+#include <QDebug>
 #include <QVBoxLayout>
 #include <QResizeEvent>
 #include <QPushButton>
-
 #include <QAbstractItemView>
 
 SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
 {
-    _scene = new  QGraphicsScene();
-
-    _view = new  CustomGraphicsView(_scene);
-    _view->setRenderHint(QPainter::Antialiasing,true);
-    _tagCompleterItemDelegate = new TagCompleterItemDelegate(this,QFont("times",FONT_SIZE));
+    this->buttonPadding = 10;
+    this->flowLayout = new FlowLayout;
+    this->setLayout(this->flowLayout);
+    this->setAttribute(Qt::WA_StaticContents);
+    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    _tagCompleterItemDelegate = new TagCompleterItemDelegate(this);
     this->initLineEdit();
-
-    _currentTagPoint = QPointF(0., _lineEdit->height() + INDENT);
-
-    QVBoxLayout layout;
-    layout.addWidget(_view);
-    layout.addWidget(_lineEdit);
-
-    this->setLayout(&layout);
-    _lineEdit->setFocus();
-
+    this->flowLayout->addWidget(lineEdit);
+    this->calcSize();
+    this->repaint();
+    lineEdit->setFocus();
 }
 
 SearchWidget::~SearchWidget()
 {
-    delete _scene;
-    delete _view;
+
 }
+
 /**
  * @brief Search::initLineEdit
  * initializes the lineEdit when you first create the widget
  */
 void SearchWidget::initLineEdit()
 {
-    _lineEdit = new QLineEdit();
-    _lineEdit->setStyleSheet("border: 3px solid gray; border-radius: 10px; padding: 5 8px;");
-    _lineEdit->resize((this->size().width() - INDENT),LINE_EDIT_HEIGHT);
+    lineEdit = new QLineEdit();
+    lineEdit->setStyleSheet("border: 0px;");
+    lineEdit->resize(this->size().width(),this->fontMetrics().height() + 2 * this->buttonPadding);
+    this->lineEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    _lineEdit->setFont(QFont("times",FONT_SIZE));
-    _completer = new CustomCompleter(this);
-    _completer->setCompletionMode(QCompleter::PopupCompletion);
-    _lineEdit->setCompleter(_completer);
+    //lineEdit->setFont(QFont("times",FONT_SIZE));
+    lineEditCompleter = new LineEditCompleter(this);
+    lineEditCompleter->setCompletionMode(QCompleter::PopupCompletion);
+    lineEdit->setCompleter(lineEditCompleter);
 
-    connect(_lineEdit, SIGNAL(returnPressed()), SLOT(addTag()));
-    connect(_completer, SIGNAL(completeFunished()),_lineEdit, SLOT(clear()));
+    connect(lineEdit, SIGNAL(returnPressed()), SLOT(addTag()));
+    connect(lineEditCompleter, SIGNAL(completeFunished()),lineEdit, SLOT(clear()));
 }
 
 /**
@@ -58,34 +54,29 @@ void SearchWidget::initLineEdit()
 void SearchWidget::addTag(const QString &data)
 {
     //adding a new tag
-    Tag* tag = new Tag(_currentTagPoint, data, this->_view);
-
-    _scene->addItem(tag);
-    connect(tag, SIGNAL(delnode(Tag*)), this, SLOT(removeNode(Tag*)));
-
-    //Calculation of positions for the next tag:
-    int newx = _currentTagPoint.x() + tag->getWidth() + INDENT;
-    _currentTagPoint.setX(newx);
-
-    if(newx > this->size().width())
-    {
-        _currentTagPoint.setY(_currentTagPoint.y() + tag->getHeight() + INDENT);
-        _currentTagPoint.setX(0);
-        tag->setPos(_currentTagPoint);
-        newx = _currentTagPoint.x() + tag-> getWidth() + INDENT;
-        _currentTagPoint.setX(newx);
-    }
+    TagButton *tag = new TagButton(this);
+    tag->setText(data);
+    this->flowLayout->removeWidget(this->lineEdit);
+    this->flowLayout->addWidget(tag);
+    this->flowLayout->addWidget(this->lineEdit);
+    connect(tag, SIGNAL(deltag(TagButton*)), this, SLOT(removeTagSlot(TagButton*)) );
+    this->repaint();
+    return;
 }
 
+/**
+ * @brief SearchWidget::setModel
+ * @param model
+ */
 void SearchWidget::setModel(QAbstractItemModel *model)
 {
-    _model = model;
-    _completer->setModel(_model);
-    _selModel = new QItemSelectionModel(_model);
+    model = model;
+    lineEditCompleter->setModel(model);
+    _selModel = new QItemSelectionModel(model);
 
     //connect( selModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(onItemSelected(QItemSelection,QItemSelection)) );
-    _completer->popup()->setItemDelegate(_tagCompleterItemDelegate); //Must be set after every time the model is set
-    connect(_completer, SIGNAL(activated(QModelIndex)),this, SLOT(insertSelection(QModelIndex)));
+    lineEditCompleter->popup()->setItemDelegate(_tagCompleterItemDelegate); //Must be set after every time the model is set
+    connect(lineEditCompleter, SIGNAL(activated(QModelIndex)),this, SLOT(insertSelection(QModelIndex)));
     return;
 }
 /**
@@ -94,11 +85,11 @@ void SearchWidget::setModel(QAbstractItemModel *model)
  */
 void SearchWidget::addTag()
 {
-    QString data = _lineEdit->text();
+    QString data = lineEdit->text();
     if(!data.isEmpty())
     {
         addTag(data);
-        _lineEdit->clear();
+        lineEdit->clear();
     }
 }
 
@@ -108,10 +99,12 @@ void SearchWidget::addTag()
  *
  * @param node - tag
  */
-void SearchWidget::removeNode(Tag *node)
+void SearchWidget::removeTagSlot(TagButton *tag)
 {
-    _scene->removeItem(node);
-    node->deleteLater();
+    this->flowLayout->removeWidget(tag);
+    tag->deleteLater();
+    //this->repaint();
+    return;
 }
 
 /**
@@ -123,17 +116,7 @@ void SearchWidget::removeNode(Tag *node)
  */
 void SearchWidget::resizeEvent(QResizeEvent *event)
 {
-    event->accept();
-
-    _view->resize(this->size());
-    _lineEdit->resize((this->size().width()),LINE_EDIT_HEIGHT);
-
-    QRect r = _view->rect();
-    r.setHeight(r.height() - INDENT);
-    r.setWidth(r.width() - INDENT);
-
-    // сцена немного трясётся при масштабирвоании
-    _scene->setSceneRect(r);
+    lineEdit->resize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
 }
 
 /**
@@ -142,11 +125,37 @@ void SearchWidget::resizeEvent(QResizeEvent *event)
  */
 void SearchWidget::insertSelection(QModelIndex curIndex)
 {
+/*
     QString str = curIndex.data().toString();
     //QModelIndex index = (itemModel)->indexByName(str,0);
-    QModelIndex index = (_model)->index(1,1);
+    QModelIndex index = (this->model)->index(1,1);
     QItemSelection selection = QItemSelection(index,index);
     this->selectionModel()->select(selection, QItemSelectionModel::Select);
+*/
+    return;
+}
+
+/**
+ * @brief SearchWidget::paintEvent
+ */
+void SearchWidget::paintEvent(QPaintEvent *event)
+{
+    QPalette palatte = this->palette();
+    QPainter painter(this);
+    painter.setPen(Qt::transparent);
+    painter.setBrush(Qt::white);
+    QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
+    painter.drawRect(widgetRect);
+    QRect usedRect(this->rect().top(), this->rect().left(), this->rect().width(), this->lineEdit->rect().bottom());
+    lineEdit->resize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
+    return;
+}
+
+void SearchWidget::calcSize()
+{
+    //! [2] calc line edit competer size
+    QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
+    //! [2]
 }
 
 /**
@@ -166,3 +175,5 @@ void SearchWidget::timerEvent(QTimerEvent *event)
 {
     return;
 }
+
+

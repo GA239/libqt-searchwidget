@@ -13,34 +13,6 @@ CustomGraphicsView::CustomGraphicsView(QGraphicsScene* pScene, QWidget *pwgt)
  */
 void CustomGraphicsView::timerEvent(QTimerEvent *event)
 {
-    Q_UNUSED(event);
-//! [1] create list of Nodes and fill it from scene nodes
-    QList<Tag *> tags;
-    foreach (QGraphicsItem *item, scene()->items()) {
-        if (Tag *tag = qgraphicsitem_cast<Tag *>(item))
-            tags << tag;
-    }
-//! [1]
-//! [2] calculate new position of nodes, used forces between nodes
-    foreach (Tag *tag, tags) {
-        tag->calculateForces();
-    }
-//! [2]
-//! [3]
-    bool itemsMoved = false;
-    foreach (Tag *tag, tags) {
-        if (tag->advance()) {
-            itemsMoved = true;
-        }
-    }
-//! [3]
-//! [4]
-    if (!itemsMoved) {
-        killTimer(timerId);
-        timerId = 0;
-    }
-//! [4]
-    return;
 }
 
 /**

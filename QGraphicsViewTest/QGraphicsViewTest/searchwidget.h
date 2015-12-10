@@ -6,11 +6,12 @@
 #include <QWidget>
 #include <QLineEdit>
 #include <QStringListModel>
+#include <QPaintEngine>
 #include <QItemSelectionModel>
-#include "customraphicsview.h"
-#include "customcompleter.h"
-#include "tag.h"
+#include "lineeditcompleter.h"
+#include "flowlayout.h"
 #include "tagcompleteritemdelegate.h"
+#include "tagbutton.h"
 
 #define FONT_SIZE 30
 #define INDENT 7
@@ -33,19 +34,29 @@ public:
 
 public slots:
     void addTag();
-    void removeNode(Tag* node);
+    void removeTagSlot(TagButton *tag);
     void insertSelection(QModelIndex curIndex);
 
+protected:
+    void paintEvent(QPaintEvent *event);
+
 private:
-    QGraphicsScene*             _scene;
-    CustomGraphicsView*         _view;
+   void calcSize(void);
+
+private:
     QPointF                      _currentTagPoint;
-    QLineEdit*                  _lineEdit;
-    CustomCompleter*            _completer;
-    QAbstractItemModel*         _model;
+    QLineEdit*                  lineEdit;
+    LineEditCompleter*            lineEditCompleter;
+    QAbstractItemModel*         model;
     QItemSelectionModel*        _selModel;
     TagCompleterItemDelegate*   _tagCompleterItemDelegate;
     int timerId;
+    FlowLayout *flowLayout;
+    QRect lineEditRect;
+    QRect completerRect;
+    int lineEditWidth;
+    int lineEditHeight;
+    int buttonPadding;
 };
 
 #endif // SEARCH_H
