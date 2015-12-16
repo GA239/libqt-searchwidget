@@ -29,7 +29,7 @@ void TagCompleterItemDelegate::paint ( QPainter * painter, const QStyleOptionVie
     //
     QString title = index.data(Qt::DisplayRole).toString();
     QRect r = option.rect.adjusted(5, 0, 100, -10);
-    painter->drawRect(r);
+    //painter->drawRect(r);
     painter->drawText(r.left(), r.top()-10, r.width() + 45, r.height(), Qt::AlignBottom|Qt::AlignLeft, title, &r);
 
 }

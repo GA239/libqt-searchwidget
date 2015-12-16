@@ -31,12 +31,12 @@ SearchWidget::~SearchWidget()
  */
 void SearchWidget::initLineEdit()
 {
-    lineEdit = new QLineEdit();
-    lineEdit->setStyleSheet("border: 0px;");
+    lineEdit = new SearchLine();
+    lineEdit->setStyleSheet("border:#ccc 1px;");
+    this->fontMetrics().height();
     lineEdit->resize(this->size().width(),this->fontMetrics().height() + 2 * this->buttonPadding);
     this->lineEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    //lineEdit->setFont(QFont("times",FONT_SIZE));
     lineEditCompleter = new LineEditCompleter(this);
     lineEditCompleter->setCompletionMode(QCompleter::PopupCompletion);
     lineEdit->setCompleter(lineEditCompleter);
@@ -72,7 +72,7 @@ void SearchWidget::setModel(QAbstractItemModel *model)
 {
     model = model;
     lineEditCompleter->setModel(model);
-    _selModel = new QItemSelectionModel(model);
+    selModel = new QItemSelectionModel(model);
 
     //connect( selModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(onItemSelected(QItemSelection,QItemSelection)) );
     lineEditCompleter->popup()->setItemDelegate(_tagCompleterItemDelegate); //Must be set after every time the model is set
@@ -144,7 +144,7 @@ void SearchWidget::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setPen(Qt::transparent);
     painter.setBrush(Qt::white);
-    QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
+    QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width(), this->rect().height());
     painter.drawRect(widgetRect);
     QRect usedRect(this->rect().top(), this->rect().left(), this->rect().width(), this->lineEdit->rect().bottom());
     lineEdit->resize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
@@ -164,7 +164,7 @@ void SearchWidget::calcSize()
  */
 QItemSelectionModel* SearchWidget::selectionModel() const
 {
-    return this->_selModel;
+    return this->selModel;
 }
 
 /**

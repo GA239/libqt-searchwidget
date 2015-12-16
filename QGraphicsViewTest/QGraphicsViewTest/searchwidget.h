@@ -8,6 +8,7 @@
 #include <QStringListModel>
 #include <QPaintEngine>
 #include <QItemSelectionModel>
+#include "searchline.h"
 #include "lineeditcompleter.h"
 #include "flowlayout.h"
 #include "tagcompleteritemdelegate.h"
@@ -44,12 +45,12 @@ private:
    void calcSize(void);
 
 private:
-    QPointF                      _currentTagPoint;
-    QLineEdit*                  lineEdit;
-    LineEditCompleter*            lineEditCompleter;
-    QAbstractItemModel*         model;
-    QItemSelectionModel*        _selModel;
-    TagCompleterItemDelegate*   _tagCompleterItemDelegate;
+    QPointF _currentTagPoint;
+    QLineEdit *lineEdit;
+    LineEditCompleter *lineEditCompleter;
+    QAbstractItemModel *model;
+    QItemSelectionModel *selModel;
+    TagCompleterItemDelegate *_tagCompleterItemDelegate;
     int timerId;
     FlowLayout *flowLayout;
     QRect lineEditRect;

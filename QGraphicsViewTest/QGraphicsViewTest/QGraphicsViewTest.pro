@@ -18,15 +18,16 @@ SOURCES += main.cpp \
     flowlayout.cpp \
     mainwindow.cpp \
     tagbutton.cpp \
-    lineeditcompleter.cpp
+    lineeditcompleter.cpp \
+    searchline.cpp
 
-HEADERS  += \
-    tagcompleteritemdelegate.h \
+HEADERS  += tagcompleteritemdelegate.h \
     searchwidget.h \
     flowlayout.h \
     mainwindow.h \
     tagbutton.h \
-    lineeditcompleter.h
+    lineeditcompleter.h \
+    searchline.h
 
 FORMS += \
     mainwindow.ui

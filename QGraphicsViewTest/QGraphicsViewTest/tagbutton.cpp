@@ -133,7 +133,7 @@ void TagButton::calcSize()
 {
     QFontMetrics fontMetrics(this->font());
     QRect rect = fontMetrics.boundingRect(this->widgetText);
-    this->fontHeight = rect.height();
+    this->fontHeight = this->fontMetrics().height();
     this->widgetWidth = rect.width() + 3 * this->buttonPadding + rect.height();
     this->widgetHeight = rect.height() + 2 * this->buttonPadding;
     this->textRect = QRect(this->buttonPadding, this->buttonPadding, rect.width(), rect.height());
