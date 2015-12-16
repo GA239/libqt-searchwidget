@@ -28,8 +28,11 @@ public:
 
     void initLineEdit();
     void addTag(const QString &data);
+    void addTag(const QModelIndex index);
+    void removeAllTags(void);
 
     void setModel(QAbstractItemModel *model);
+    void setSelectionModel(QItemSelectionModel *selModel);
     QItemSelectionModel* selectionModel() const;
     void timerEvent(QTimerEvent *event);
 
@@ -37,6 +40,7 @@ public slots:
     void addTag();
     void removeTagSlot(TagButton *tag);
     void insertSelection(QModelIndex curIndex);
+    void onTagSelected(const QItemSelection &selected, const QItemSelection &deselected);
 
 protected:
     void paintEvent(QPaintEvent *event);

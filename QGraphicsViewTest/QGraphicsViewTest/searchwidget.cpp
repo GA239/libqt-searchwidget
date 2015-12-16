@@ -65,20 +65,62 @@ void SearchWidget::addTag(const QString &data)
 }
 
 /**
+ * @brief SearchWidget::addTag
+ * @param index
+ */
+void SearchWidget::addTag(const QModelIndex index)
+{
+    TagButton *tag = new TagButton(this);
+    tag->setText(this->model->data(index, Qt::DisplayRole));
+    this->flowLayout->removeWidget(this->lineEdit);
+    this->flowLayout->addWidget(tag);
+    this->flowLayout->addWidget(this->lineEdit);
+    connect(tag, SIGNAL(deltag(TagButton*)), this, SLOT(removeTagSlot(TagButton*)) );
+    this->repaint();
+    return;
+}
+
+/**
+ * @brief SearchWidget::removeAllTags
+ */
+void SearchWidget::removeAllTags()
+{
+    TagButton *tag;
+    int count = this->children().count();
+    for(int i = 0; i < count - 1; i++) {  // -1 becouse LineEdit is one of widgets
+                                          ///@todo it may be crush appication
+        tag = (TagButton*)this->children().at(i);
+        this->flowLayout->removeWidget(tag);
+        tag->deleteLater();
+    }
+}
+
+/**
  * @brief SearchWidget::setModel
  * @param model
  */
 void SearchWidget::setModel(QAbstractItemModel *model)
 {
-    model = model;
-    lineEditCompleter->setModel(model);
-    selModel = new QItemSelectionModel(model);
+    this->model = model;
+    this->lineEditCompleter->setModel(model);
+    this->selModel = new QItemSelectionModel(model);
 
     //connect( selModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(onItemSelected(QItemSelection,QItemSelection)) );
     lineEditCompleter->popup()->setItemDelegate(_tagCompleterItemDelegate); //Must be set after every time the model is set
     connect(lineEditCompleter, SIGNAL(activated(QModelIndex)),this, SLOT(insertSelection(QModelIndex)));
     return;
 }
+
+/**
+ * @brief SearchWidget::setSelectionModel
+ * @param selModel
+ */
+void SearchWidget::setSelectionModel(QItemSelectionModel *selModel)
+{
+    this->selModel = selModel;
+    connect( this->selModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(onTagSelected(QItemSelection,QItemSelection)) );
+}
+
 /**
  * @brief Search::addTag
  * It adds new tag to the scene
@@ -103,7 +145,6 @@ void SearchWidget::removeTagSlot(TagButton *tag)
 {
     this->flowLayout->removeWidget(tag);
     tag->deleteLater();
-    //this->repaint();
     return;
 }
 
@@ -133,6 +174,21 @@ void SearchWidget::insertSelection(QModelIndex curIndex)
     this->selectionModel()->select(selection, QItemSelectionModel::Select);
 */
     return;
+}
+
+/**
+ * @brief SearchWidget::onTagSelected
+ * @param topLeft
+ * @param bottomRight
+ */
+void SearchWidget::onTagSelected(const QItemSelection & selected, const QItemSelection & deselected)
+{
+    QModelIndexList list;
+    list = selected.indexes();
+    for(int i = 0; i < list.count(); i++)
+    {
+        this->addTag(list.at(i));
+    }
 }
 
 /**
@@ -175,5 +231,4 @@ void SearchWidget::timerEvent(QTimerEvent *event)
 {
     return;
 }
-
 
