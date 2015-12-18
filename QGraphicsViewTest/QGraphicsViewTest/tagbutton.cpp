@@ -75,9 +75,18 @@ QString TagButton::text()
  * @brief Sets unical element id
  * @param id
  */
-void TagButton::setId(qintptr id)
+void TagButton::setInternalId(qintptr id)
 {
     this->id = id;
+}
+
+/**
+ * @brief TagButton::internalId
+ * @return
+ */
+qintptr TagButton::internalId()
+{
+   return this->id;
 }
 
 /**
@@ -88,10 +97,12 @@ void TagButton::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     //! [1] draw background
-    painter.setPen(QPen(Qt::gray, 0));
-    painter.setBrush(QBrush(QColor(193,193,193)));
-    QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
-    painter.drawRect(widgetRect);
+    if(this->id > 0) {
+        painter.setPen(QPen(Qt::gray, 0));
+        painter.setBrush(QBrush(QColor(193,193,193)));
+        QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
+        painter.drawRect(widgetRect);
+    }
     //! [1]
     //! [2] draw text
     painter.setPen(QPen(Qt::black, 0));

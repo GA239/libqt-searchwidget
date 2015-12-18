@@ -56,6 +56,7 @@ void SearchWidget::addTag(const QString &data)
     //adding a new tag
     TagButton *tag = new TagButton(this);
     tag->setText(data);
+    this->tagList.append(tag);
     this->flowLayout->removeWidget(this->lineEdit);
     this->flowLayout->addWidget(tag);
     this->flowLayout->addWidget(this->lineEdit);
@@ -71,12 +72,34 @@ void SearchWidget::addTag(const QString &data)
 void SearchWidget::addTag(const QModelIndex index)
 {
     TagButton *tag = new TagButton(this);
-    tag->setText(this->model->data(index, Qt::DisplayRole));
+    tag->setText(this->model->data(index, Qt::DisplayRole).toString());
+    tag->setInternalId(index.internalId());
+    this->tagList.append(tag);
     this->flowLayout->removeWidget(this->lineEdit);
     this->flowLayout->addWidget(tag);
     this->flowLayout->addWidget(this->lineEdit);
     connect(tag, SIGNAL(deltag(TagButton*)), this, SLOT(removeTagSlot(TagButton*)) );
     this->repaint();
+    return;
+}
+
+/**
+ * @brief SearchWidget::removeTag
+ * @param index
+ */
+void SearchWidget::removeTag(const QModelIndex index)
+{
+    TagButton *tag;
+    int count = this->children().count();
+    for(int i = 0; i < count; i++) {
+        tag = qobject_cast<TagButton *> (this->children().at(i));
+        if(tag != NULL) {
+            if(tag->internalId() == index.internalId()) {
+                this->flowLayout->removeWidget(tag);
+                tag->deleteLater();
+            }
+        }
+    }
     return;
 }
 
@@ -87,12 +110,16 @@ void SearchWidget::removeAllTags()
 {
     TagButton *tag;
     int count = this->children().count();
-    for(int i = 0; i < count - 1; i++) {  // -1 becouse LineEdit is one of widgets
-                                          ///@todo it may be crush appication
-        tag = (TagButton*)this->children().at(i);
-        this->flowLayout->removeWidget(tag);
-        tag->deleteLater();
+    for(int i = 0; i < count ; i++) {
+
+        tag = qobject_cast<TagButton *>(this->children().at(i));
+        if(tag != NULL) {
+            this->flowLayout->removeWidget(tag);
+            tag->deleteLater();
+        }
     }
+    this->selModel->clear();
+    return;
 }
 
 /**
@@ -183,12 +210,21 @@ void SearchWidget::insertSelection(QModelIndex curIndex)
  */
 void SearchWidget::onTagSelected(const QItemSelection & selected, const QItemSelection & deselected)
 {
+    qDebug() << "SearchWidget::onTagSelected(...)";
     QModelIndexList list;
-    list = selected.indexes();
-    for(int i = 0; i < list.count(); i++)
-    {
-        this->addTag(list.at(i));
+
+    list = deselected.indexes();
+    for(int i = 0; i < list.count(); i++) {
+        this->removeTag(list.at(i));
+        qDebug() << "deselected name = "<< this->model->data(list.at(i)) << "; id=" << list.at(i).internalId();
     }
+
+    list = selected.indexes();
+    for(int i = 0; i < list.count(); i++) {
+        this->addTag(list.at(i));
+        qDebug() << "selected name = "<< this->model->data(list.at(i)) << "; id=" << list.at(i).internalId();
+    }
+    return;
 }
 
 /**

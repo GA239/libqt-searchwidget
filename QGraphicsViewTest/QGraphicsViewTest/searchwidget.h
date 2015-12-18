@@ -29,6 +29,7 @@ public:
     void initLineEdit();
     void addTag(const QString &data);
     void addTag(const QModelIndex index);
+    void removeTag(const QModelIndex index);
     void removeAllTags(void);
 
     void setModel(QAbstractItemModel *model);
@@ -49,19 +50,18 @@ private:
    void calcSize(void);
 
 private:
-    QPointF _currentTagPoint;
     QLineEdit *lineEdit;
     LineEditCompleter *lineEditCompleter;
     QAbstractItemModel *model;
     QItemSelectionModel *selModel;
     TagCompleterItemDelegate *_tagCompleterItemDelegate;
-    int timerId;
     FlowLayout *flowLayout;
     QRect lineEditRect;
     QRect completerRect;
     int lineEditWidth;
     int lineEditHeight;
     int buttonPadding;
+    QList <TagButton*> tagList;
 };
 
 #endif // SEARCH_H

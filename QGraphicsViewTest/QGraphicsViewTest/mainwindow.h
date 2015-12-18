@@ -16,6 +16,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void clearButtonAction(void);
+
 private:
     Ui::MainWindow *ui;
     QStringListModel *model;

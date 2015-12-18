@@ -18,7 +18,8 @@ public:
     // custom method
     void setText(QString widgetText);
     QString text(void);
-    void setId(qintptr id);
+    void setInternalId(qintptr id);
+    qintptr internalId(void);
 
 signals:
     void deltag(TagButton *tag);
