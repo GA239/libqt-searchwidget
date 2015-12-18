@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QPainter>
+#include <QModelIndex>
 
 class TagButton : public QWidget
 {
@@ -20,6 +21,8 @@ public:
     QString text(void);
     void setInternalId(qintptr id);
     qintptr internalId(void);
+    void setIndex(QModelIndex index);
+    QModelIndex index(void);
 
 signals:
     void deltag(TagButton *tag);
@@ -36,6 +39,7 @@ private:
 private:
     QString widgetText;
     qintptr id;
+    QModelIndex internalIndex;
     int widgetWidth;
     int widgetHeight;
     int fontHeight;

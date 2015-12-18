@@ -73,7 +73,8 @@ void SearchWidget::addTag(const QModelIndex index)
 {
     TagButton *tag = new TagButton(this);
     tag->setText(this->model->data(index, Qt::DisplayRole).toString());
-    tag->setInternalId(index.internalId());
+    //tag->setInternalId(index.internalId());
+    tag->setIndex(index);
     this->tagList.append(tag);
     this->flowLayout->removeWidget(this->lineEdit);
     this->flowLayout->addWidget(tag);
@@ -94,7 +95,8 @@ void SearchWidget::removeTag(const QModelIndex index)
     for(int i = 0; i < count; i++) {
         tag = qobject_cast<TagButton *> (this->children().at(i));
         if(tag != NULL) {
-            if(tag->internalId() == index.internalId()) {
+            //if(tag->internalId() == index.internalId()) {
+            if(tag->index() == index) {
                 this->flowLayout->removeWidget(tag);
                 tag->deleteLater();
             }

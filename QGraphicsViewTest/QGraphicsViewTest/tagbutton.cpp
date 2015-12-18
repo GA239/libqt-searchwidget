@@ -86,7 +86,26 @@ void TagButton::setInternalId(qintptr id)
  */
 qintptr TagButton::internalId()
 {
-   return this->id;
+    return this->id;
+}
+
+/**
+ * @brief TagButton::setIndex
+ * @param index
+ */
+void TagButton::setIndex(QModelIndex index)
+{
+    this->internalIndex = index;
+    return;
+}
+
+/**
+ * @brief TagButton::index
+ * @return
+ */
+QModelIndex TagButton::index()
+{
+    return this->internalIndex;
 }
 
 /**
@@ -97,7 +116,7 @@ void TagButton::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     //! [1] draw background
-    if(this->id > 0) {
+    if(this->internalIndex.isValid()) {
         painter.setPen(QPen(Qt::gray, 0));
         painter.setBrush(QBrush(QColor(193,193,193)));
         QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
