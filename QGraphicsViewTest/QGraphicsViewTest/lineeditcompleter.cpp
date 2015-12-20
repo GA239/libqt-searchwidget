@@ -3,6 +3,7 @@
 #include <QAbstractItemView>
 #include <QEvent>
 #include <QKeyEvent>
+#include <QDebug>
 
 LineEditCompleter::LineEditCompleter(QAbstractItemModel* model, QObject* parent) :
         QCompleter(model,parent)
@@ -42,7 +43,15 @@ bool LineEditCompleter::eventFilter(QObject *o, QEvent *e)
 
             if ((key == Qt::Key_Return) || (key == Qt::Key_Enter))
             {
-                 emit completeFunished();
+                /*qDebug() << "LineEditCompleter::eventFilter currentIndex currentRow = " << this->currentRow();
+                QModelIndex curIndex = this->currentIndex();
+                QString name = this->model()->data(curIndex, Qt::DisplayRole).toString();
+                qDebug() << "LineEditCompleter::eventFilter currentIndex.name = " << name;
+                qDebug() << "LineEditCompleter::eventFilter  currentCompletion = " << this->currentCompletion();
+                */
+                //emit this->completeFinished(this->currentIndex());
+                emit this->completeFunished();
+                emit this->completeFinished(this->currentIndex());
             }
          }
      }

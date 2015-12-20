@@ -18,11 +18,13 @@ public:
 
 public slots:
     void clearButtonAction(void);
+    void getTagButtonAction(void);
 
 private:
     Ui::MainWindow *ui;
     QStringListModel *model;
     SearchWidget *searchWidget;
+    QLabel *label;
 };
 
 #endif // MAINWINDOW_H

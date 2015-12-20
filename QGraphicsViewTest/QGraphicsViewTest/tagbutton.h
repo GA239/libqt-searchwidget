@@ -19,8 +19,6 @@ public:
     // custom method
     void setText(QString widgetText);
     QString text(void);
-    void setInternalId(qintptr id);
-    qintptr internalId(void);
     void setIndex(QModelIndex index);
     QModelIndex index(void);
 
@@ -38,7 +36,6 @@ private:
 
 private:
     QString widgetText;
-    qintptr id;
     QModelIndex internalIndex;
     int widgetWidth;
     int widgetHeight;

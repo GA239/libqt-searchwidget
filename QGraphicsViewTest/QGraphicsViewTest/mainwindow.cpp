@@ -3,6 +3,7 @@
 #include <QPushButton>
 #include <QSpacerItem>
 #include <QListView>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -25,10 +26,19 @@ MainWindow::MainWindow(QWidget *parent) :
     searchWidget->setSelectionModel(listView->selectionModel());
     this->ui->centralwidget->layout()->addWidget(listView);
     listView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    QPushButton *button = new QPushButton(this);
-    button->setText("Clear");
-    this->ui->centralwidget->layout()->addWidget(button);
-    connect(button, SIGNAL(clicked()), this, SLOT(clearButtonAction()) );
+
+    label = new QLabel(this);
+    this->ui->centralwidget->layout()->addWidget(label);
+
+    QPushButton *clearButton = new QPushButton(this);
+    clearButton->setText("Clear");
+    this->ui->centralwidget->layout()->addWidget(clearButton);
+    connect(clearButton, SIGNAL(clicked()), this, SLOT(clearButtonAction()) );
+
+    QPushButton *getTagButton = new QPushButton(this);
+    getTagButton->setText("Get Tags");
+    this->ui->centralwidget->layout()->addWidget(getTagButton);
+    connect(getTagButton, SIGNAL(clicked()), this, SLOT(getTagButtonAction()) );
 }
 
 /**
@@ -45,5 +55,27 @@ MainWindow::~MainWindow()
 void MainWindow::clearButtonAction()
 {
     this->searchWidget->removeAllTags();
+    return;
+}
+
+/**
+ * @brief MainWindow::getTagButtonAction
+ */
+void MainWindow::getTagButtonAction()
+{
+    QStringList stringList  = this->searchWidget->unfindedTags();
+    QModelIndexList indexList = this->searchWidget->tags();
+    QModelIndex index;
+    QString text = "finded tags: ";
+    for(int i = 0; i < indexList.count(); i++){
+        index = indexList.at(i);
+        text.append(this->model->data(index, Qt::DisplayRole).toString()).append(QString(", "));
+    }
+    text.append("\r\nunfinded tags: ");
+    for(int i = 0; i < stringList.count(); i++){
+        text.append(stringList.at(i)).append(QString(", "));
+    }
+
+    this->label->setText(text);
     return;
 }

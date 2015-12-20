@@ -9,6 +9,7 @@
 TagButton::TagButton(QWidget *parent) : QWidget(parent)
 {
     this->buttonPadding = 10;
+    this->internalIndex = QModelIndex();
     this->calcSize();
     this->setAttribute(Qt::WA_StaticContents);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -69,24 +70,6 @@ void TagButton::setText(QString text)
 QString TagButton::text()
 {
     return this->widgetText;
-}
-
-/**
- * @brief Sets unical element id
- * @param id
- */
-void TagButton::setInternalId(qintptr id)
-{
-    this->id = id;
-}
-
-/**
- * @brief TagButton::internalId
- * @return
- */
-qintptr TagButton::internalId()
-{
-    return this->id;
 }
 
 /**
@@ -152,8 +135,8 @@ void TagButton::mousePressEvent(QMouseEvent *event)
             && mousePos.y() >= this->closerRect.top()
             && mousePos.y() <= this->closerRect.bottom()) {
         emit this->deltag(this);
-        qDebug() << "close()";
     }
+    return;
 }
 
 /**

@@ -8,6 +8,7 @@
 #include <QStringListModel>
 #include <QPaintEngine>
 #include <QItemSelectionModel>
+#include <QTimer>
 #include "searchline.h"
 #include "lineeditcompleter.h"
 #include "flowlayout.h"
@@ -35,19 +36,25 @@ public:
     void setModel(QAbstractItemModel *model);
     void setSelectionModel(QItemSelectionModel *selModel);
     QItemSelectionModel* selectionModel() const;
-    void timerEvent(QTimerEvent *event);
+    QModelIndexList tags(void);
+    QStringList unfindedTags();
 
 public slots:
-    void addTag();
     void removeTagSlot(TagButton *tag);
-    void insertSelection(QModelIndex curIndex);
+    void insertSelection(QModelIndex index);
+    void completerFinishedAction(QModelIndex proxyIndex);
+    void completerReturnPressedAction();
     void onTagSelected(const QItemSelection &selected, const QItemSelection &deselected);
+    void test(QString text);
+    void clearLaterTimer();
 
 protected:
     void paintEvent(QPaintEvent *event);
+    void timerEvent(QTimerEvent *event);
 
 private:
    void calcSize(void);
+   void clearLater(void);
 
 private:
     QLineEdit *lineEdit;
@@ -61,7 +68,8 @@ private:
     int lineEditWidth;
     int lineEditHeight;
     int buttonPadding;
-    QList <TagButton*> tagList;
+    int completerIsFinished;
+    int clearLaterTimerId;
 };
 
 #endif // SEARCH_H

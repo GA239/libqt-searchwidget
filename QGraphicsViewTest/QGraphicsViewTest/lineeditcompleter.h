@@ -23,6 +23,7 @@ class LineEditCompleter : public QCompleter
 
 signals:
        bool completeFunished();
+       bool completeFinished(QModelIndex index);
 
 private:
 
