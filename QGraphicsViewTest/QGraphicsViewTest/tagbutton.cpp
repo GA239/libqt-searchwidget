@@ -97,6 +97,7 @@ QModelIndex TagButton::index()
  */
 void TagButton::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event);
     QPainter painter(this);
     //! [1] draw background
     if(this->internalIndex.isValid()) {

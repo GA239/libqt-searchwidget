@@ -6,18 +6,24 @@
 #include <QAbstractItemView>
 #include <QAbstractProxyModel>
 
+/**
+ * @brief Default Constructor. Sets tefault values, and make
+ * the default setting of the widget
+ * @param parent
+ */
 SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
 {
-    this->clearLaterTimerId = 0;
+    //! [1]
+    this->timerId = 0;
     this->model = new QStringListModel(this);
-    this->completerIsFinished = 0;
     this->buttonPadding = 10;
     this->flowLayout = new FlowLayout;
     this->setLayout(this->flowLayout);
     this->setAttribute(Qt::WA_StaticContents);
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    _tagCompleterItemDelegate = new TagCompleterItemDelegate(this);
+    tagCompleterItemDelegate = new TagCompleterItemDelegate(this);
     //! [1]
+    //! [2]
     lineEdit = new SearchLine();
     lineEdit->setStyleSheet("border:#ccc 1px;");
     this->fontMetrics().height();
@@ -26,45 +32,32 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
 
     lineEditCompleter = new LineEditCompleter(this);
     lineEditCompleter->setModel(this->model);
-    //lineEditCompleter->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
-    //lineEditCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     lineEditCompleter->setWrapAround(false);
     lineEditCompleter->setCompletionMode(QCompleter::PopupCompletion);
     lineEdit->setCompleter(lineEditCompleter);
 
-    connect(lineEdit, SIGNAL(returnPressed()), SLOT(completerReturnPressedAction()));
-    //connect(lineEditCompleter, SIGNAL(completeFunished()), SLOT(completerReturnPressedAction()));
-    connect(lineEditCompleter, SIGNAL(activated(QModelIndex)),this, SLOT(completerFinishedAction(QModelIndex)));
-    connect(lineEditCompleter, SIGNAL(activated(const QString&)), lineEdit, SLOT(clear()), Qt::QueuedConnection);
-    connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT(test(QString)) );
-    connect(lineEditCompleter->popup(), SIGNAL(entered(QModelIndex)), lineEdit, SLOT(clear()) );
-    connect(lineEditCompleter, SIGNAL(activated(QModelIndex)), lineEdit, SLOT(clear()) );
-    //! [1]
+    connect(lineEdit, SIGNAL(returnPressed()), SLOT(onReturnPressed()));
+    connect(lineEditCompleter, SIGNAL(activated(QModelIndex)),this, SLOT(onCompleterFinished(QModelIndex)));
+    connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT(onSearchTextChanged(QString)) );
+
     this->flowLayout->addWidget(lineEdit);
     this->calcSize();
     this->repaint();
     lineEdit->setFocus();
+    //! [2]
 }
 
+/**
+ * @brief Destructor.
+ */
 SearchWidget::~SearchWidget()
 {
 
 }
 
 /**
- * @brief Search::initLineEdit
- * initializes the lineEdit when you first create the widget
- */
-void SearchWidget::initLineEdit()
-{
-
-}
-
-/**
- * @brief Search::addTag
- * It adds new tag with data
- *
- * @param data: text data
+ * @brief Creates and adds new TagButton element to widget.
+ * @param name of new tag
  */
 void SearchWidget::addTag(const QString &data)
 {
@@ -81,8 +74,8 @@ void SearchWidget::addTag(const QString &data)
 }
 
 /**
- * @brief SearchWidget::addTag
- * @param index
+ * @brief Creates and adds new TagButton element to widget.
+ * @param index associated with tag; name of tag also takes from index
  */
 void SearchWidget::addTag(const QModelIndex index)
 {
@@ -100,30 +93,47 @@ void SearchWidget::addTag(const QModelIndex index)
 }
 
 /**
- * @brief SearchWidget::removeTag
+ * @brief Removes TagButton element from search widget.
  * @param index
  */
-void SearchWidget::removeTag(const QModelIndex index)
+void SearchWidget::removeTag(TagButton *tag)
 {
-    TagButton *tag;
-    int count = this->children().count();
-    for(int i = 0; i < count; i++) {
-        tag = qobject_cast<TagButton *> (this->children().at(i));
-        if(tag != NULL) {
-            if(tag->index() == index) {
-                this->flowLayout->removeWidget(tag);
-                tag->deleteLater();
-            }
-        }
+    if(tag != NULL) {
+        this->flowLayout->removeWidget(tag);
+        tag->deleteLater();
     }
     return;
 }
 
 /**
- * @brief SearchWidget::removeAllTags
+ * @brief Returns TagButton associated with the index if present, else return NULL.
+ * @param index
+ * @return
  */
-void SearchWidget::removeAllTags()
+TagButton *SearchWidget::getTagByIndex(const QModelIndex index)
 {
+    TagButton *tag = NULL;
+    int count = this->children().count();
+    for(int i = 0; i < count; i++) {
+        tag = qobject_cast<TagButton *> (this->children().at(i));
+        if(tag != NULL) {
+            if(tag->index() == index) {
+                break;
+            }
+        }
+    }
+    return tag;
+}
+
+/**
+ * @brief Clears search widget: removes all tags and clears search line
+ */
+void SearchWidget::clear(void)
+{
+    //! [1] remove finded tags
+    this->selModel->clear();
+    //! [1]
+    //! [2] remove unfinded tags
     TagButton *tag;
     int count = this->children().count();
     for(int i = 0; i < count ; i++) {
@@ -134,12 +144,15 @@ void SearchWidget::removeAllTags()
             tag->deleteLater();
         }
     }
-    this->selModel->clear();
+    //! [2]
+    //! [3] clear text in search line
+    this->lineEdit->clear();
+    //! [3]
     return;
 }
 
 /**
- * @brief SearchWidget::setModel
+ * @brief Sets new data model used by search widget
  * @param model
  */
 void SearchWidget::setModel(QAbstractItemModel *model)
@@ -148,13 +161,13 @@ void SearchWidget::setModel(QAbstractItemModel *model)
     this->model = model;
     this->lineEditCompleter->setModel(model);
     this->selModel = new QItemSelectionModel(model);
-    lineEditCompleter->popup()->setItemDelegate(_tagCompleterItemDelegate); //Must be set after every time the model is set
+    lineEditCompleter->popup()->setItemDelegate(tagCompleterItemDelegate); //Must be set after every time the model is set
     return;
 }
 
 /**
- * @brief SearchWidget::setSelectionModel
- * @param selModel
+ * @brief Sets new selection model used by search widget
+ * @param selection model
  */
 void SearchWidget::setSelectionModel(QItemSelectionModel *selModel)
 {
@@ -164,10 +177,8 @@ void SearchWidget::setSelectionModel(QItemSelectionModel *selModel)
 }
 
 /**
- * @brief Search::removeNode
- * It removes tag frome the scene
- *
- * @param node - tag
+ * @brief Action on request for tag removing from widget
+ * @param pointer to TagButton object
  */
 void SearchWidget::removeTagSlot(TagButton *tag)
 {
@@ -186,10 +197,7 @@ void SearchWidget::removeTagSlot(TagButton *tag)
 }
 
 /**
- * @brief Search::resizeEvent
- *
- * resize the widget and all of its elements
- *
+ * @brief Function is called when search widged is resized.
  * @param event
  */
 void SearchWidget::resizeEvent(QResizeEvent *event)
@@ -199,8 +207,8 @@ void SearchWidget::resizeEvent(QResizeEvent *event)
 }
 
 /**
- * @brief SearchWidget::insertSelection
- * @param current index
+ * @brief Adds new index in SearchWidget selection model
+ * @param new index
  */
 void SearchWidget::insertSelection(QModelIndex index)
 {
@@ -214,10 +222,10 @@ void SearchWidget::insertSelection(QModelIndex index)
 }
 
 /**
- * @brief SearchWidget::completerFinishedAction
- * @param index
+ * @brief Action on the end of the selection item in the comleter list.
+ * @param proxyIndex - index in completion model
  */
-void SearchWidget::completerFinishedAction(QModelIndex proxyIndex)
+void SearchWidget::onCompleterFinished(QModelIndex proxyIndex)
 {
     if(proxyIndex.isValid()) {
         QAbstractProxyModel* proxyModel = qobject_cast<QAbstractProxyModel*>(this->lineEditCompleter->completionModel());
@@ -228,16 +236,14 @@ void SearchWidget::completerFinishedAction(QModelIndex proxyIndex)
             this->clearLater();
         }
     }
-    else {
-        ;
-    }
+
     return;
 }
 
 /**
- * @brief SearchWidget::completerReturnPressedAction
+ * @brief Action on search line Return or Enter key pressed.
  */
-void SearchWidget::completerReturnPressedAction()
+void SearchWidget::onReturnPressed(void)
 {
     QString prefixText = this->lineEditCompleter->completionPrefix();
     QString completionText = this->lineEditCompleter->currentCompletion();
@@ -250,17 +256,19 @@ void SearchWidget::completerReturnPressedAction()
 }
 
 /**
- * @brief SearchWidget::onTagSelected
+ * @brief Action on the selection model changes: select and unselect items in widgets,
+ * usinf this selection model.
  * @param topLeft
  * @param bottomRight
  */
 void SearchWidget::onTagSelected(const QItemSelection & selected, const QItemSelection & deselected)
 {
     QModelIndexList list;
-
+    TagButton *tag;
     list = deselected.indexes();
     for(int i = 0; i < list.count(); i++) {
-        this->removeTag(list.at(i));
+        tag = this->getTagByIndex(list.at(i));
+        this->removeTag(tag);
     }
 
     list = selected.indexes();
@@ -271,10 +279,11 @@ void SearchWidget::onTagSelected(const QItemSelection & selected, const QItemSel
 }
 
 /**
- * @brief SearchWidget::test
+ * @brief Checks the search line on the availability of special characters (',')
+ * and produces tags finding in the text
  * @param text
  */
-void SearchWidget::test(QString text)
+void SearchWidget::onSearchTextChanged(QString text)
 {
     QString leftSide = text.right(1);
     if(leftSide == ",") {
@@ -285,19 +294,14 @@ void SearchWidget::test(QString text)
     return;
 }
 
-/**
- * @brief SearchWidget::clearLaterTimer
- */
-void SearchWidget::clearLaterTimer()
-{
-
-}
 
 /**
- * @brief SearchWidget::paintEvent
+ * @brief Function is called when a search widget repaint event occurs.
+ * @param event
  */
 void SearchWidget::paintEvent(QPaintEvent *event)
 {
+    /// @attention QWidget::paintEngine() will never be called (see docs); the backingstore will be used instead.
     Q_UNUSED(event);
     QPalette palatte = this->palette();
     QPainter painter(this);
@@ -310,15 +314,25 @@ void SearchWidget::paintEvent(QPaintEvent *event)
     return;
 }
 
+/**
+ * @brief Function is called when a timer event occurs.
+ * In SearchWidget it is used for deferred cleaning search line.
+ * @param event - parameters that describe a timer event.
+ */
 void SearchWidget::timerEvent(QTimerEvent *event)
 {
     QWidget::timerEvent(event);
-    killTimer(this->clearLaterTimerId);
-    this->clearLaterTimerId = 0;
-    this->lineEdit->clear();
+    if(event->timerId() == this->timerId) {
+        killTimer(this->timerId);
+        this->timerId = 0;
+        this->lineEdit->clear();
+    }
     return;
 }
 
+/**
+ * @brief Calculates the size of the base elements of the widget
+ */
 void SearchWidget::calcSize()
 {
     //! [2] calc line edit competer size
@@ -327,19 +341,20 @@ void SearchWidget::calcSize()
 }
 
 /**
- * @brief SearchWidget::clearLater
+ * @brief Schedules clear search line text (timeout is 1 ms)
+ * Use this when text in search line must be cleared after
+ * receiving all events from completer and other emited text changes.
  */
 void SearchWidget::clearLater()
 {
-    if (!this->clearLaterTimerId)
-    {
-        this->clearLaterTimerId = startTimer(1);
+    if (!this->timerId) {
+        this->timerId = startTimer(1);
     }
     return;
 }
 
 /**
- * @brief SearchWidget::selectionModel
+ * @brief Returns curent SearchWidget selection model
  * @return
  */
 QItemSelectionModel* SearchWidget::selectionModel() const
@@ -348,8 +363,8 @@ QItemSelectionModel* SearchWidget::selectionModel() const
 }
 
 /**
- * @brief SearchWidget::tags
- * @return
+ * @brief Returns tags (indexes) selected by SearchWidget in model
+ * @return list of indexes
  */
 QModelIndexList SearchWidget::tags()
 {
@@ -368,8 +383,8 @@ QModelIndexList SearchWidget::tags()
 }
 
 /**
- * @brief SearchWidget::unfindedTags
- * @return
+ * @brief Returns list of tags name undefinded in model
+ * @return list of strings
  */
 QStringList SearchWidget::unfindedTags()
 {

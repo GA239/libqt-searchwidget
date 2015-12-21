@@ -5,17 +5,31 @@
 #include <QKeyEvent>
 #include <QDebug>
 
+/**
+ * @brief LineEditCompleter::LineEditCompleter
+ * @param model
+ * @param parent
+ */
 LineEditCompleter::LineEditCompleter(QAbstractItemModel* model, QObject* parent) :
         QCompleter(model,parent)
 {
 }
 
+/**
+ * @brief LineEditCompleter::LineEditCompleter
+ * @param list
+ * @param parent
+ */
 LineEditCompleter::LineEditCompleter(const QStringList &list, QObject* parent) :
         QCompleter(list,parent)
 {
 
 }
 
+/**
+ * @brief LineEditCompleter::LineEditCompleter
+ * @param parent
+ */
 LineEditCompleter::LineEditCompleter(QObject *parent):
     QCompleter(parent)
 {

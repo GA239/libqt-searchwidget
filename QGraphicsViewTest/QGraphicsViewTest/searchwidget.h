@@ -26,13 +26,13 @@ public:
     explicit SearchWidget(QWidget *parent = 0);
     virtual ~SearchWidget();
     void resizeEvent ( QResizeEvent * event );
-
-    void initLineEdit();
+    //! [2] Custom public methods
     void addTag(const QString &data);
     void addTag(const QModelIndex index);
-    void removeTag(const QModelIndex index);
-    void removeAllTags(void);
-
+    void removeTag(TagButton *tag);
+    TagButton *getTagByIndex(const QModelIndex index);
+    void clear(void);
+    //! [2]
     void setModel(QAbstractItemModel *model);
     void setSelectionModel(QItemSelectionModel *selModel);
     QItemSelectionModel* selectionModel() const;
@@ -42,11 +42,10 @@ public:
 public slots:
     void removeTagSlot(TagButton *tag);
     void insertSelection(QModelIndex index);
-    void completerFinishedAction(QModelIndex proxyIndex);
-    void completerReturnPressedAction();
+    void onCompleterFinished(QModelIndex proxyIndex);
+    void onReturnPressed(void);
     void onTagSelected(const QItemSelection &selected, const QItemSelection &deselected);
-    void test(QString text);
-    void clearLaterTimer();
+    void onSearchTextChanged(QString text);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -61,15 +60,14 @@ private:
     LineEditCompleter *lineEditCompleter;
     QAbstractItemModel *model;
     QItemSelectionModel *selModel;
-    TagCompleterItemDelegate *_tagCompleterItemDelegate;
+    TagCompleterItemDelegate *tagCompleterItemDelegate;
     FlowLayout *flowLayout;
     QRect lineEditRect;
     QRect completerRect;
     int lineEditWidth;
     int lineEditHeight;
     int buttonPadding;
-    int completerIsFinished;
-    int clearLaterTimerId;
+    int timerId;
 };
 
 #endif // SEARCH_H

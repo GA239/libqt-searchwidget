@@ -41,6 +41,8 @@ void TagCompleterItemDelegate::paint ( QPainter * painter, const QStyleOptionVie
  */
 QSize TagCompleterItemDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
+    Q_UNUSED(option);
+    Q_UNUSED(index);
     return QSize(200,65);
 }
 

@@ -5,9 +5,11 @@
 #include <QListView>
 #include <QDebug>
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+/**
+ * @brief Default constructor. Create new window and sets tefault values.
+ * @param parent
+ */
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     this->model = new QStringListModel(this);
@@ -20,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->centralwidget->layout()->addWidget(searchWidget);
     //QSpacerItem *spacer = new QSpacerItem(40, 20,  QSizePolicy::Minimum, QSizePolicy::Expanding);
     //this->ui->centralwidget->layout()->addItem(spacer);
+
     QListView *listView = new QListView();
     listView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     listView->setModel(this->model);
@@ -33,16 +36,16 @@ MainWindow::MainWindow(QWidget *parent) :
     QPushButton *clearButton = new QPushButton(this);
     clearButton->setText("Clear");
     this->ui->centralwidget->layout()->addWidget(clearButton);
-    connect(clearButton, SIGNAL(clicked()), this, SLOT(clearButtonAction()) );
+    connect(clearButton, SIGNAL(clicked()), this, SLOT(clearSearchWidget()) );
 
     QPushButton *getTagButton = new QPushButton(this);
     getTagButton->setText("Get Tags");
     this->ui->centralwidget->layout()->addWidget(getTagButton);
-    connect(getTagButton, SIGNAL(clicked()), this, SLOT(getTagButtonAction()) );
+    connect(getTagButton, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
 }
 
 /**
- * @brief MainWindow::~MainWindow
+ * @brief destructor
  */
 MainWindow::~MainWindow()
 {
@@ -50,18 +53,18 @@ MainWindow::~MainWindow()
 }
 
 /**
- * @brief MainWindow::clearButtonAction
+ * @brief Clears search widget
  */
-void MainWindow::clearButtonAction()
+void MainWindow::clearSearchWidget(void)
 {
-    this->searchWidget->removeAllTags();
+    this->searchWidget->clear();
     return;
 }
 
 /**
- * @brief MainWindow::getTagButtonAction
+ * @brief Shows tags from search widget
  */
-void MainWindow::getTagButtonAction()
+void MainWindow::showSearchWidgetTags(void)
 {
     QStringList stringList  = this->searchWidget->unfindedTags();
     QModelIndexList indexList = this->searchWidget->tags();

@@ -17,8 +17,8 @@ public:
     ~MainWindow();
 
 public slots:
-    void clearButtonAction(void);
-    void getTagButtonAction(void);
+    void clearSearchWidget(void);
+    void showSearchWidgetTags(void);
 
 private:
     Ui::MainWindow *ui;

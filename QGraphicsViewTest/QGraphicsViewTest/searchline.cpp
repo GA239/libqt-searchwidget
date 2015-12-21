@@ -1,18 +1,26 @@
 #include "searchline.h"
 
+/**
+ * @brief Default Constructor. Sets tefault values, and make
+ * the default setting of the search line.
+ */
 SearchLine::SearchLine()
 {
     this->buttonPadding = 10;
     this->calcSize();
 }
 
+/**
+ * @brief Desstructor
+ */
 SearchLine::~SearchLine()
 {
 
 }
 
 /**
- * @brief TagButton::minimumWidth
+ * @brief  Returns the minimum width of the search line.
+ * Reimplemented method.
  * @return
  */
 int SearchLine::minimumWidth() const
@@ -21,7 +29,8 @@ int SearchLine::minimumWidth() const
 }
 
 /**
- * @brief TagButton::minimumHeight
+ * @brief  Returns the minimum height of the search line.
+ * Reimplemented method.
  * @return
  */
 int SearchLine::minimumHeight() const
@@ -30,7 +39,8 @@ int SearchLine::minimumHeight() const
 }
 
 /**
- * @brief TagButton::sizeHint
+ * @brief  Returns the recommended size of the search line.
+ * Reimplemented method.
  * @return
  */
 QSize SearchLine::sizeHint() const
@@ -40,7 +50,7 @@ QSize SearchLine::sizeHint() const
 }
 
 /**
- * @brief SearchLine::calcSize
+ * @brief Calculates the size of the base elements of the serach line.
  */
 void SearchLine::calcSize()
 {
@@ -51,7 +61,7 @@ void SearchLine::calcSize()
 }
 
 /**
- * @brief SearchLine::paintEvent
+ * @brief Function is called when a search line repaint event occurs.
  * @param event
  */
 void SearchLine::paintEvent(QPaintEvent *event)
