@@ -1,16 +1,17 @@
 #include "tagcompleteritemdelegate.h"
 #include <QFontDatabase>
 
+/**
+ * @brief Default constructor.
+ * @param parent
+ */
 TagCompleterItemDelegate::TagCompleterItemDelegate(QObject *parent)
         :QStyledItemDelegate(parent)
 {
 }
 
 /**
- * @brief TagCompleterItemDelegate::paint
- *
- * function to redraw the list
- *
+ * @brief Function is called when a comleter list row needed to repaint.
  * @param painter
  * @param option
  * @param index
@@ -32,9 +33,10 @@ void TagCompleterItemDelegate::paint ( QPainter * painter, const QStyleOptionVie
     //painter->drawRect(r);
     painter->drawText(r.left(), r.top()-10, r.width() + 45, r.height(), Qt::AlignBottom|Qt::AlignLeft, title, &r);
 
+
 }
 /**
- * @brief TagCompleterItemDelegate::sizeHint
+ * @brief Returns the recommended size of the comleter list row.
  * @param option
  * @param index
  * @return

@@ -41,19 +41,17 @@ public:
 
 public slots:
     void removeTagSlot(TagButton *tag);
-    void insertSelection(QModelIndex index);
+    void onTagSelected(const QItemSelection &selected, const QItemSelection &deselected);
     void onCompleterFinished(QModelIndex proxyIndex);
     void onReturnPressed(void);
-    void onTagSelected(const QItemSelection &selected, const QItemSelection &deselected);
     void onSearchTextChanged(QString text);
 
 protected:
     void paintEvent(QPaintEvent *event);
-    void timerEvent(QTimerEvent *event);
 
 private:
    void calcSize(void);
-   void clearLater(void);
+   void insertSelection(QModelIndex index);
 
 private:
     QLineEdit *lineEdit;
@@ -62,12 +60,7 @@ private:
     QItemSelectionModel *selModel;
     TagCompleterItemDelegate *tagCompleterItemDelegate;
     FlowLayout *flowLayout;
-    QRect lineEditRect;
-    QRect completerRect;
-    int lineEditWidth;
-    int lineEditHeight;
     int buttonPadding;
-    int timerId;
 };
 
 #endif // SEARCH_H

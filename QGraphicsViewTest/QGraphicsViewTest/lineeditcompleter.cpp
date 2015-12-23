@@ -6,68 +6,90 @@
 #include <QDebug>
 
 /**
- * @brief LineEditCompleter::LineEditCompleter
+ * @brief Constructor
  * @param model
  * @param parent
  */
 LineEditCompleter::LineEditCompleter(QAbstractItemModel* model, QObject* parent) :
         QCompleter(model,parent)
 {
+    this->timerId = 0;
+    connect(this, SIGNAL(activated(QModelIndex)), this, SLOT(onActivated(QModelIndex)) );
 }
 
 /**
- * @brief LineEditCompleter::LineEditCompleter
+ * @brief Constructor
  * @param list
  * @param parent
  */
 LineEditCompleter::LineEditCompleter(const QStringList &list, QObject* parent) :
         QCompleter(list,parent)
 {
-
+    this->timerId = 0;
+    connect(this, SIGNAL(activated(QModelIndex)), this, SLOT(onActivated(QModelIndex)) );
 }
 
 /**
- * @brief LineEditCompleter::LineEditCompleter
+ * @brief Constructor
  * @param parent
  */
 LineEditCompleter::LineEditCompleter(QObject *parent):
     QCompleter(parent)
 {
-
+    this->timerId = 0;
+    connect(this, SIGNAL(activated(QModelIndex)), this, SLOT(onActivated(QModelIndex)) );
 }
 
 /**
- * @brief CustomCompleter::eventFilter
- *
- * rewrited eventFilter, need to clean up lineedit after you add the tag
- *
- * @param o
- * @param e
+ * @brief Rewrited eventFilter. Function is called when a search completer event occurs.
+ * @param object
+ * @param event
  * @return
  */
-bool LineEditCompleter::eventFilter(QObject *o, QEvent *e)
+bool LineEditCompleter::eventFilter(QObject *object, QEvent *event)
 {
-    bool eventResuslt = QCompleter::eventFilter(o,e);
-    if(eventResuslt)
-     {
-         if(e->type() == QEvent::KeyPress)
-         {
-            QKeyEvent *ke = (QKeyEvent *)(e);
-            const int key = ke->key();
-
-            if ((key == Qt::Key_Return) || (key == Qt::Key_Enter))
-            {
-                /*qDebug() << "LineEditCompleter::eventFilter currentIndex currentRow = " << this->currentRow();
-                QModelIndex curIndex = this->currentIndex();
-                QString name = this->model()->data(curIndex, Qt::DisplayRole).toString();
-                qDebug() << "LineEditCompleter::eventFilter currentIndex.name = " << name;
-                qDebug() << "LineEditCompleter::eventFilter  currentCompletion = " << this->currentCompletion();
-                */
-                //emit this->completeFinished(this->currentIndex());
-                emit this->completeFunished();
-                emit this->completeFinished(this->currentIndex());
+    bool eventResuslt = QCompleter::eventFilter(object,event);
+    if(eventResuslt) {
+         if(event->type() == QEvent::KeyPress){
+            QKeyEvent *keyEvent = (QKeyEvent *)(event);
+            const int key = keyEvent->key();
+            if ((key == Qt::Key_Return) || (key == Qt::Key_Enter)) {
+                ;
             }
          }
-     }
+    }
     return eventResuslt;
 }
+
+/**
+ * @brief Schedules clear search line text (timeout is 1 ms)
+ * Use this when text in search line must be cleared after
+ * receiving all events from completer and other emited text changes.
+ *
+ * @param index
+ */
+void LineEditCompleter::onActivated(QModelIndex index)
+{
+    this->activatedIndex = index;
+    if (!this->timerId) {
+        this->timerId = startTimer(1);
+    }
+}
+
+/**
+ * @brief Function is called when a timer event occurs, used for
+ * emiting message about end of selection.
+ *
+ * @param event - parameters describe timer event.
+ */
+void LineEditCompleter::timerEvent(QTimerEvent *event)
+{
+    QCompleter::timerEvent(event);
+    if(event->timerId() == this->timerId) {
+        killTimer(this->timerId);
+        this->timerId = 0;
+        emit this->completeFinished(this->activatedIndex);
+    }
+    return;
+}
+

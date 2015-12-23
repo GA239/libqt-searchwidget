@@ -8,13 +8,13 @@
 
 /**
  * @brief Default Constructor. Sets tefault values, and make
- * the default setting of the widget
+ * the default setting of the widget.
+ *
  * @param parent
  */
 SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
 {
     //! [1]
-    this->timerId = 0;
     this->model = new QStringListModel(this);
     this->buttonPadding = 10;
     this->flowLayout = new FlowLayout;
@@ -37,7 +37,8 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     lineEdit->setCompleter(lineEditCompleter);
 
     connect(lineEdit, SIGNAL(returnPressed()), SLOT(onReturnPressed()));
-    connect(lineEditCompleter, SIGNAL(activated(QModelIndex)),this, SLOT(onCompleterFinished(QModelIndex)));
+    //connect(lineEditCompleter, SIGNAL(activated(QModelIndex)),this, SLOT(onCompleterFinished(QModelIndex)));
+    connect(lineEditCompleter, SIGNAL(completeFinished(QModelIndex)),this, SLOT(onCompleterFinished(QModelIndex)));
     connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT(onSearchTextChanged(QString)) );
 
     this->flowLayout->addWidget(lineEdit);
@@ -233,10 +234,9 @@ void SearchWidget::onCompleterFinished(QModelIndex proxyIndex)
         QModelIndex index = proxyModel->mapToSource(proxyIndex);
         if(index.isValid()) {
             this->insertSelection(index);
-            this->clearLater();
+            this->lineEdit->clear();
         }
     }
-
     return;
 }
 
@@ -258,6 +258,7 @@ void SearchWidget::onReturnPressed(void)
 /**
  * @brief Action on the selection model changes: select and unselect items in widgets,
  * usinf this selection model.
+ *
  * @param topLeft
  * @param bottomRight
  */
@@ -280,7 +281,8 @@ void SearchWidget::onTagSelected(const QItemSelection & selected, const QItemSel
 
 /**
  * @brief Checks the search line on the availability of special characters (',')
- * and produces tags finding in the text
+ * and produces tags finding in the text.
+ *
  * @param text
  */
 void SearchWidget::onSearchTextChanged(QString text)
@@ -293,7 +295,6 @@ void SearchWidget::onSearchTextChanged(QString text)
     }
     return;
 }
-
 
 /**
  * @brief Function is called when a search widget repaint event occurs.
@@ -315,22 +316,6 @@ void SearchWidget::paintEvent(QPaintEvent *event)
 }
 
 /**
- * @brief Function is called when a timer event occurs.
- * In SearchWidget it is used for deferred cleaning search line.
- * @param event - parameters that describe a timer event.
- */
-void SearchWidget::timerEvent(QTimerEvent *event)
-{
-    QWidget::timerEvent(event);
-    if(event->timerId() == this->timerId) {
-        killTimer(this->timerId);
-        this->timerId = 0;
-        this->lineEdit->clear();
-    }
-    return;
-}
-
-/**
  * @brief Calculates the size of the base elements of the widget
  */
 void SearchWidget::calcSize()
@@ -338,19 +323,6 @@ void SearchWidget::calcSize()
     //! [2] calc line edit competer size
     QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
     //! [2]
-}
-
-/**
- * @brief Schedules clear search line text (timeout is 1 ms)
- * Use this when text in search line must be cleared after
- * receiving all events from completer and other emited text changes.
- */
-void SearchWidget::clearLater()
-{
-    if (!this->timerId) {
-        this->timerId = startTimer(1);
-    }
-    return;
 }
 
 /**

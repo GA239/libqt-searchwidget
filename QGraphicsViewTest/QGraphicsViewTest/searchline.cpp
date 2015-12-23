@@ -21,6 +21,7 @@ SearchLine::~SearchLine()
 /**
  * @brief  Returns the minimum width of the search line.
  * Reimplemented method.
+ *
  * @return
  */
 int SearchLine::minimumWidth() const
@@ -31,6 +32,7 @@ int SearchLine::minimumWidth() const
 /**
  * @brief  Returns the minimum height of the search line.
  * Reimplemented method.
+ *
  * @return
  */
 int SearchLine::minimumHeight() const
@@ -39,8 +41,9 @@ int SearchLine::minimumHeight() const
 }
 
 /**
- * @brief  Returns the recommended size of the search line.
+ * @brief Returns the recommended size of the search line.
  * Reimplemented method.
+ *
  * @return
  */
 QSize SearchLine::sizeHint() const
