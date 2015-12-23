@@ -14,14 +14,20 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     tagcompleteritemdelegate.cpp \
-    customcompleter.cpp \
-    customgraphicsview.cpp \
     searchwidget.cpp \
-    tag.cpp
+    flowlayout.cpp \
+    mainwindow.cpp \
+    tagbutton.cpp \
+    lineeditcompleter.cpp \
+    searchline.cpp
 
-HEADERS  += \
-    tagcompleteritemdelegate.h \
-    customcompleter.h \
-    customraphicsview.h \
+HEADERS  += tagcompleteritemdelegate.h \
     searchwidget.h \
-    tag.h
+    flowlayout.h \
+    mainwindow.h \
+    tagbutton.h \
+    lineeditcompleter.h \
+    searchline.h
+
+FORMS += \
+    mainwindow.ui

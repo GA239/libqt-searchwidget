@@ -6,11 +6,14 @@
 #include <QWidget>
 #include <QLineEdit>
 #include <QStringListModel>
+#include <QPaintEngine>
 #include <QItemSelectionModel>
-#include "customraphicsview.h"
-#include "customcompleter.h"
-#include "tag.h"
+#include <QTimer>
+#include "searchline.h"
+#include "lineeditcompleter.h"
+#include "flowlayout.h"
 #include "tagcompleteritemdelegate.h"
+#include "tagbutton.h"
 
 #define FONT_SIZE 30
 #define INDENT 7
@@ -23,29 +26,41 @@ public:
     explicit SearchWidget(QWidget *parent = 0);
     virtual ~SearchWidget();
     void resizeEvent ( QResizeEvent * event );
-
-    void initLineEdit();
+    //! [2] Custom public methods
     void addTag(const QString &data);
-
+    void addTag(const QModelIndex index);
+    void removeTag(TagButton *tag);
+    TagButton *getTagByIndex(const QModelIndex index);
+    void clear(void);
+    //! [2]
     void setModel(QAbstractItemModel *model);
+    void setSelectionModel(QItemSelectionModel *selModel);
     QItemSelectionModel* selectionModel() const;
-    void timerEvent(QTimerEvent *event);
+    QModelIndexList tags(void);
+    QStringList unfindedTags();
 
 public slots:
-    void addTag();
-    void removeNode(Tag* node);
-    void insertSelection(QModelIndex curIndex);
+    void removeTagSlot(TagButton *tag);
+    void onTagSelected(const QItemSelection &selected, const QItemSelection &deselected);
+    void onCompleterFinished(QModelIndex proxyIndex);
+    void onReturnPressed(void);
+    void onSearchTextChanged(QString text);
+
+protected:
+    void paintEvent(QPaintEvent *event);
 
 private:
-    QGraphicsScene*             _scene;
-    CustomGraphicsView*         _view;
-    QPointF                      _currentTagPoint;
-    QLineEdit*                  _lineEdit;
-    CustomCompleter*            _completer;
-    QAbstractItemModel*         _model;
-    QItemSelectionModel*        _selModel;
-    TagCompleterItemDelegate*   _tagCompleterItemDelegate;
-    int timerId;
+   void calcSize(void);
+   void insertSelection(QModelIndex index);
+
+private:
+    QLineEdit *lineEdit;
+    LineEditCompleter *lineEditCompleter;
+    QAbstractItemModel *model;
+    QItemSelectionModel *selModel;
+    TagCompleterItemDelegate *tagCompleterItemDelegate;
+    FlowLayout *flowLayout;
+    int buttonPadding;
 };
 
 #endif // SEARCH_H

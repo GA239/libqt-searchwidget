@@ -112,9 +112,9 @@ QItemSelectionModel *SearchWidget::selectionModel() const
 /**
  * @brief SearchWidget::setSelectionModel
  */
-void SearchWidget::setSelectionModel(QItemSelectionModel *selectionModel)
+void SearchWidget::setSelectionModel(QItemSelectionModel *selModel)
 {
-    this->selModel = selectionModel;
+    this->selModel = selModel;
     connect( selModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(onItemSelected(QItemSelection,QItemSelection)) );
 }
 
