@@ -4,11 +4,7 @@
 #include <QResizeEvent>
 #include <QPushButton>
 #include <QAbstractItemView>
-<<<<<<< HEAD
 #include <QAbstractProxyModel>
-=======
-#include <QCoreApplication>
->>>>>>> dea7b3eb2d9a3e3caada4c83e5cb1bd327c62c4d
 
 /**
  * @brief Default Constructor. Sets tefault values, and make
@@ -34,19 +30,11 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     lineEdit->resize(this->size().width(),this->fontMetrics().height() + 2 * this->buttonPadding);
     this->lineEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-<<<<<<< HEAD
     lineEditCompleter = new LineEditCompleter(this);
     lineEditCompleter->setModel(this->model);
     lineEditCompleter->setWrapAround(false);
     lineEditCompleter->setCompletionMode(QCompleter::PopupCompletion);
     lineEdit->setCompleter(lineEditCompleter);
-=======
-    _view = new  CustomGraphicsView(_scene);
-    _view->setRenderHint(QPainter::Antialiasing,true);
-    _tagCompleterItemDelegate = new TagCompleterItemDelegate(this,QFont("times",FONT_SIZE));
-
-    this->initLineEdit();
->>>>>>> dea7b3eb2d9a3e3caada4c83e5cb1bd327c62c4d
 
     connect(lineEdit, SIGNAL(returnPressed()), SLOT(onReturnPressed()));
     //connect(lineEditCompleter, SIGNAL(activated(QModelIndex)),this, SLOT(onCompleterFinished(QModelIndex)));
@@ -92,7 +80,6 @@ void SearchWidget::addTag(const QString &data)
  */
 void SearchWidget::addTag(const QModelIndex index)
 {
-<<<<<<< HEAD
     TagButton *tag = new TagButton(this);
     tag->setText(this->model->data(index, Qt::DisplayRole).toString());
     tag->setIndex(index);
@@ -137,22 +124,6 @@ TagButton *SearchWidget::getTagByIndex(const QModelIndex index)
         }
     }
     return tag;
-=======
-    _lineEdit = new CustomLineEdit();
-    _lineEdit->setStyleSheet("border: 3px solid gray; border-radius: 10px; padding: 5 8px;");
-    _lineEdit->resize((this->size().width() - INDENT),LINE_EDIT_HEIGHT);
-
-    _lineEdit->setFont(QFont("times",FONT_SIZE));
-    _completer = new CustomCompleter(this);
-    _completer->setCompletionMode(QCompleter::PopupCompletion);
-    _popup = new CustomPopup(this);
-    _completer->setPopup(_popup);
-    _lineEdit->setCompleter(_completer);
-
-    connect(_completer, SIGNAL(activated(QModelIndex)), this ,SLOT(addTagTromPopup(QModelIndex)));
-    connect(_lineEdit, SIGNAL(textChanged(QString)), SLOT(textWatcher()));
-    connect(_lineEdit, SIGNAL(returnPressed()), SLOT(addTag()));
->>>>>>> dea7b3eb2d9a3e3caada4c83e5cb1bd327c62c4d
 }
 
 /**
@@ -257,7 +228,6 @@ void SearchWidget::insertSelection(QModelIndex index)
  */
 void SearchWidget::onCompleterFinished(QModelIndex proxyIndex)
 {
-<<<<<<< HEAD
     if(proxyIndex.isValid()) {
         QAbstractProxyModel* proxyModel = qobject_cast<QAbstractProxyModel*>(this->lineEditCompleter->completionModel());
         Q_ASSERT(proxyModel != 0);
@@ -266,13 +236,6 @@ void SearchWidget::onCompleterFinished(QModelIndex proxyIndex)
             this->insertSelection(index);
             this->lineEdit->clear();
         }
-=======
-    QString data = _lineEdit->text();
-    if(!data.isEmpty())
-    {
-        addTag(data);
-        this->cleanLineEdit();
->>>>>>> dea7b3eb2d9a3e3caada4c83e5cb1bd327c62c4d
     }
     return;
 }
@@ -362,37 +325,6 @@ void SearchWidget::calcSize()
     //! [2]
 }
 
-void SearchWidget::cleanLineEdit()
-{
-    _lineEdit->clear();
-}
-/**
- * @brief SearchWidget::addTagTromPopup
- *
- * adds a tag with the data from the Completer with current index
- *
- * @param index
- */
-void SearchWidget::addTagTromPopup(const QModelIndex &index)
-{
-    this->_completer->popup()->setCurrentIndex(index);
-    this->addTag();
-    this->_lineEdit->changeModificationPossibility();
-}
-/**
- * @brief SearchWidget::textWatcher
- *
- * Following the lineedit and prohibit editing if needed
- *
- */
-void SearchWidget::textWatcher()
-{
-    if(this->_lineEdit->notAbleToModifie())
-    {
-        this->cleanLineEdit();
-    }
-}
-
 /**
  * @brief Returns curent SearchWidget selection model
  * @return
@@ -422,7 +354,6 @@ QModelIndexList SearchWidget::tags()
     return indexList;
 }
 
-<<<<<<< HEAD
 /**
  * @brief Returns list of tags name undefinded in model
  * @return list of strings
@@ -443,9 +374,3 @@ QStringList SearchWidget::unfindedTags()
    return stringList;
 }
 
-=======
-bool SearchWidget::eventFilter(QObject *watched, QEvent *event)
-{
-    return QObject::eventFilter(watched, event);
-}
->>>>>>> dea7b3eb2d9a3e3caada4c83e5cb1bd327c62c4d
