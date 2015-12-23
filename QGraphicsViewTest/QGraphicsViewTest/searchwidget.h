@@ -13,7 +13,12 @@
 #include "lineeditcompleter.h"
 #include "flowlayout.h"
 #include "tagcompleteritemdelegate.h"
+<<<<<<< HEAD
 #include "tagbutton.h"
+=======
+#include "custompopup.h"
+#include "customlineedit.h"
+>>>>>>> dea7b3eb2d9a3e3caada4c83e5cb1bd327c62c4d
 
 #define FONT_SIZE 30
 #define INDENT 7
@@ -36,6 +41,7 @@ public:
     void setModel(QAbstractItemModel *model);
     void setSelectionModel(QItemSelectionModel *selModel);
     QItemSelectionModel* selectionModel() const;
+<<<<<<< HEAD
     QModelIndexList tags(void);
     QStringList unfindedTags();
 
@@ -61,6 +67,30 @@ private:
     TagCompleterItemDelegate *tagCompleterItemDelegate;
     FlowLayout *flowLayout;
     int buttonPadding;
+=======
+    void timerEvent(QTimerEvent *event);
+    bool eventFilter(QObject * watched, QEvent * event);
+
+public slots:
+    void addTag();
+    void removeNode(Tag* node);
+    void insertSelection(QModelIndex curIndex);
+    void cleanLineEdit();
+    void addTagTromPopup(const QModelIndex &index);
+    void textWatcher();
+
+private:
+    QGraphicsScene*             _scene;
+    CustomGraphicsView*         _view;
+    QPointF                      _currentTagPoint;
+    CustomLineEdit*                  _lineEdit;
+    CustomCompleter*            _completer;
+    QAbstractItemModel*         _model;
+    QItemSelectionModel*        _selModel;
+    TagCompleterItemDelegate*   _tagCompleterItemDelegate;
+    CustomPopup*                _popup;
+    int timerId;
+>>>>>>> dea7b3eb2d9a3e3caada4c83e5cb1bd327c62c4d
 };
 
 #endif // SEARCH_H
