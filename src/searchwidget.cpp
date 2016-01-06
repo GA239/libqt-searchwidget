@@ -17,6 +17,7 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     //! [1]
     this->model = new QStringListModel(this);
     this->buttonPadding = 10;
+    this->enableNewTagCreation = true;
     this->flowLayout = new FlowLayout;
     this->setLayout(this->flowLayout);
     this->setAttribute(Qt::WA_StaticContents);
@@ -207,6 +208,38 @@ void SearchWidget::resizeEvent(QResizeEvent *event)
     lineEdit->resize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
 }
 
+int SearchWidget::minimumHeight()
+{
+    return this->lineEdit->sizeHint().height() + 4 * this->buttonPadding;
+}
+
+int SearchWidget::minimumWidth()
+{
+    return this->width();
+}
+
+QSize SearchWidget::minimumSize()
+{
+    QSize size;
+    size.setHeight(this->minimumHeight());
+    size.setWidth(this->minimumWidth());
+    return size;
+}
+
+/**
+ * @brief Returns the recommended size of the search line.
+ * Reimplemented method.
+ *
+ * @return
+ */
+QSize SearchWidget::sizeHint()
+{
+    QSize size;
+    size.setHeight(this->minimumHeight());
+    size.setWidth(this->minimumWidth());
+    return size;
+}
+
 /**
  * @brief Adds new index in SearchWidget selection model
  * @param new index
@@ -287,11 +320,13 @@ void SearchWidget::onTagSelected(const QItemSelection & selected, const QItemSel
  */
 void SearchWidget::onSearchTextChanged(QString text)
 {
-    QString leftSide = text.right(1);
-    if(leftSide == ",") {
-        QString name = text.left(text.length() - 1);
-        this->addTag(name);
-        this->lineEdit->clear();
+    if(this->enableNewTagCreation) {
+        QString leftSide = text.right(1);
+        if(leftSide == ",") {
+            QString name = text.left(text.length() - 1);
+            this->addTag(name);
+            this->lineEdit->clear();
+        }
     }
     return;
 }
@@ -304,11 +339,11 @@ void SearchWidget::paintEvent(QPaintEvent *event)
 {
     /// @attention QWidget::paintEngine() will never be called (see docs); the backingstore will be used instead.
     Q_UNUSED(event);
-    QPalette palatte = this->palette();
+    //QPalette palatte = this->palette();
     QPainter painter(this);
-    painter.setPen(Qt::transparent);
+    painter.setPen(Qt::gray);
     painter.setBrush(Qt::white);
-    QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width(), this->rect().height());
+    QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
     painter.drawRect(widgetRect);
     QRect usedRect(this->rect().top(), this->rect().left(), this->rect().width(), this->lineEdit->rect().bottom());
     lineEdit->resize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
@@ -372,5 +407,14 @@ QStringList SearchWidget::unfindedTags()
        }
    }
    return stringList;
+}
+
+/**
+ * @brief Sets enable or disable adding undefinded tag in search widget
+ * @param status
+ */
+void SearchWidget::setEnableNewTagCreation(bool status)
+{
+    this->enableNewTagCreation = status;
 }
 

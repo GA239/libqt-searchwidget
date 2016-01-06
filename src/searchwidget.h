@@ -26,6 +26,10 @@ public:
     explicit SearchWidget(QWidget *parent = 0);
     virtual ~SearchWidget();
     void resizeEvent ( QResizeEvent * event );
+    int minimumHeight();
+    int minimumWidth();
+    QSize minimumSize();
+    QSize sizeHint();
     //! [2] Custom public methods
     void addTag(const QString &data);
     void addTag(const QModelIndex index);
@@ -38,6 +42,7 @@ public:
     QItemSelectionModel* selectionModel() const;
     QModelIndexList tags(void);
     QStringList unfindedTags();
+    void setEnableNewTagCreation(bool status);
 
 public slots:
     void removeTagSlot(TagButton *tag);
@@ -61,6 +66,8 @@ private:
     TagCompleterItemDelegate *tagCompleterItemDelegate;
     FlowLayout *flowLayout;
     int buttonPadding;
+    bool enableNewTagCreation;
+
 };
 
 #endif // SEARCH_H
