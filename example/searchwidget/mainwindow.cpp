@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
 #include <QPushButton>
 #include <QSpacerItem>
 #include <QListView>
@@ -14,12 +15,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
     this->model = new QStringListModel(this);
     this->model->setStringList(QStringList() << "Item1" << "Item2" << "Item3" << "C" << "C++" << "C#" << "C++" << "php" << "qt");
+
     this->searchWidget = new SearchWidget(this);
     this->searchWidget->setModel(this->model);
 
     QVBoxLayout *verLayout = new QVBoxLayout;
-    this->ui->centralwidget->setLayout(verLayout);
-    this->ui->centralwidget->layout()->addWidget(searchWidget);
+    this->ui->centralWidget->setLayout(verLayout);
+    this->ui->centralWidget->layout()->addWidget(searchWidget);
     //QSpacerItem *spacer = new QSpacerItem(40, 20,  QSizePolicy::Minimum, QSizePolicy::Expanding);
     //this->ui->centralwidget->layout()->addItem(spacer);
 
@@ -27,20 +29,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     listView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     listView->setModel(this->model);
     searchWidget->setSelectionModel(listView->selectionModel());
-    this->ui->centralwidget->layout()->addWidget(listView);
+    this->ui->centralWidget->layout()->addWidget(listView);
     listView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     label = new QLabel(this);
-    this->ui->centralwidget->layout()->addWidget(label);
+    this->ui->centralWidget->layout()->addWidget(label);
 
     QPushButton *clearButton = new QPushButton(this);
     clearButton->setText("Clear");
-    this->ui->centralwidget->layout()->addWidget(clearButton);
+    this->ui->centralWidget->layout()->addWidget(clearButton);
     connect(clearButton, SIGNAL(clicked()), this, SLOT(clearSearchWidget()) );
 
     QPushButton *getTagButton = new QPushButton(this);
     getTagButton->setText("Get Tags");
-    this->ui->centralwidget->layout()->addWidget(getTagButton);
+    this->ui->centralWidget->layout()->addWidget(getTagButton);
     connect(getTagButton, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
 }
 
@@ -68,6 +70,7 @@ void MainWindow::showSearchWidgetTags(void)
 {
     QStringList stringList  = this->searchWidget->unfindedTags();
     QModelIndexList indexList = this->searchWidget->tags();
+
     QModelIndex index;
     QString text = "finded tags: ";
     for(int i = 0; i < indexList.count(); i++){
