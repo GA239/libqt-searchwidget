@@ -13,20 +13,16 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    tmp/flowlayout.cpp \
-    tmp/lineeditcompleter.cpp \
-    tmp/searchline.cpp \
-    tmp/searchwidget.cpp \
-    tmp/tagbutton.cpp \
-    tmp/tagcompleteritemdelegate.cpp
+        mainwindow.cpp
 
-HEADERS  += mainwindow.h \
-    tmp/flowlayout.h \
-    tmp/lineeditcompleter.h \
-    tmp/searchline.h \
-    tmp/searchwidget.h \
-    tmp/tagbutton.h \
-    tmp/tagcompleteritemdelegate.h
+HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
+
+CONFIG(debug, debug|release) {
+    LIBS+= -L../../build-searchwidget-desktop/Debug/debug -lsearchwidget
+}
+
+CONFIG(release, debug|release) {
+    LIBS+= -L../../build-searchwidget-desktop/Release/release -lsearchwidget
+}
