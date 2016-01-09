@@ -40,16 +40,6 @@ LineEditCompleter::LineEditCompleter(QObject *parent):
 {
     this->timerId = 0;
     connect(this, SIGNAL(activated(QModelIndex)), this, SLOT(onActivated(QModelIndex)) );
-
-    QPoint pos = QPoint(0,0);
-    int w = 100;
-    int h = 100;
-    QRect geometry(pos.x(), pos.y(), w, h);
-    QGraphicsProxyWidget *proxyWidget = this->popup()->graphicsProxyWidget();
-    if (proxyWidget)
-        proxyWidget->setGeometry(geometry);
-    else
-        this->popup()->setGeometry(geometry);
 }
 
 /**
