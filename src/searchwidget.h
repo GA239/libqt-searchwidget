@@ -33,6 +33,7 @@ public:
     //! [2] Custom public methods
     void addTag(const QString &data);
     void addTag(const QModelIndex index);
+    void addTag(TagButton *tag);
     void removeTag(TagButton *tag);
     TagButton *getTagByIndex(const QModelIndex index);
     void clear(void);
@@ -57,9 +58,10 @@ protected:
 private:
    void calcSize(void);
    void insertSelection(QModelIndex index);
+   int calcTagsSpace(bool lastTag);
 
 private:
-    QLineEdit *lineEdit;
+    SearchLine *lineEdit;
     LineEditCompleter *lineEditCompleter;
     QAbstractItemModel *model;
     QItemSelectionModel *selModel;
