@@ -16,11 +16,13 @@ SOURCES += tagcompleteritemdelegate.cpp \
     flowlayout.cpp \
     tagbutton.cpp \
     lineeditcompleter.cpp \
-    searchline.cpp
+    searchline.cpp \
+    completerpopup.cpp
 
 HEADERS  += tagcompleteritemdelegate.h \
     searchwidget.h \
     flowlayout.h \
     tagbutton.h \
     lineeditcompleter.h \
-    searchline.h
+    searchline.h \
+    completerpopup.h

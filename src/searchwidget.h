@@ -14,6 +14,7 @@
 #include "flowlayout.h"
 #include "tagcompleteritemdelegate.h"
 #include "tagbutton.h"
+#include "completerpopup.h"
 
 #define FONT_SIZE 30
 #define INDENT 7
@@ -63,6 +64,7 @@ private:
 private:
     SearchLine *lineEdit;
     LineEditCompleter *lineEditCompleter;
+    CompleterPopup* popup;
     QAbstractItemModel *model;
     QItemSelectionModel *selModel;
     TagCompleterItemDelegate *tagCompleterItemDelegate;

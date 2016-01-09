@@ -38,6 +38,8 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     lineEditCompleter->setModel(this->model);
     lineEditCompleter->setWrapAround(false);
     lineEditCompleter->setCompletionMode(QCompleter::PopupCompletion);
+    popup = new CompleterPopup(this);
+    lineEditCompleter->setPopup(popup);
     lineEdit->setCompleter(lineEditCompleter);
 
     connect(lineEdit, SIGNAL(returnPressed()), SLOT(onReturnPressed()));
@@ -233,9 +235,13 @@ void SearchWidget::removeTagSlot(TagButton *tag)
 void SearchWidget::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event);
-    int stringlength = calcTagsSpace(true);
-    lineEdit->setFixedSize((this->size().width() - 2*this->buttonPadding - stringlength), this->fontMetrics().height() + 2*this->buttonPadding);
+    this->lineEdit->setFixedSize((this->size().width() - 2*this->buttonPadding - calcTagsSpace(true)), this->fontMetrics().height() + 2*this->buttonPadding);
 
+    QPoint pos = this->pos();
+    pos.setY(pos.y() +  this->fontMetrics().height() + 2*this->buttonPadding);
+
+    this->popup->setPoint(this->mapToGlobal(pos));
+    this->popup->setWidth(this->size().width() - 2*this->buttonPadding);
 }
 
 int SearchWidget::minimumHeight()
