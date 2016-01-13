@@ -20,7 +20,6 @@ public:
     ~MainWindow();
 
 public slots:
-    void clearSearchWidget(void);
     void showSearchWidgetTags(void);
 
 private:

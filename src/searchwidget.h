@@ -14,6 +14,7 @@
 #include "flowlayout.h"
 #include "tagcompleteritemdelegate.h"
 #include "tagbutton.h"
+#include "closebutton.h"
 #include "completerpopup.h"
 
 #define FONT_SIZE 30
@@ -37,7 +38,7 @@ public:
     void addTag(TagButton *tag);
     void removeTag(TagButton *tag);
     TagButton *getTagByIndex(const QModelIndex index);
-    void clear(void);
+
     //! [2]
     void setModel(QAbstractItemModel *model);
     void setSelectionModel(QItemSelectionModel *selModel);
@@ -52,6 +53,7 @@ public slots:
     void onCompleterFinished(QModelIndex proxyIndex);
     void onReturnPressed(void);
     void onSearchTextChanged(QString text);
+    void clear(void);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -63,6 +65,7 @@ private:
 
 private:
     SearchLine *lineEdit;
+    CloseButton *closeButton;
     LineEditCompleter *lineEditCompleter;
     CompleterPopup* popup;
     QAbstractItemModel *model;

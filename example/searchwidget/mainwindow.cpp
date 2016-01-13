@@ -35,11 +35,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     label = new QLabel(this);
     this->ui->centralWidget->layout()->addWidget(label);
 
-    QPushButton *clearButton = new QPushButton(this);
-    clearButton->setText("Clear");
-    this->ui->centralWidget->layout()->addWidget(clearButton);
-    connect(clearButton, SIGNAL(clicked()), this, SLOT(clearSearchWidget()) );
-
     QPushButton *getTagButton = new QPushButton(this);
     getTagButton->setText("Get Tags");
     this->ui->centralWidget->layout()->addWidget(getTagButton);
@@ -52,15 +47,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-/**
- * @brief Clears search widget
- */
-void MainWindow::clearSearchWidget(void)
-{
-    this->searchWidget->clear();
-    return;
 }
 
 /**

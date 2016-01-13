@@ -17,7 +17,8 @@ SOURCES += tagcompleteritemdelegate.cpp \
     tagbutton.cpp \
     lineeditcompleter.cpp \
     searchline.cpp \
-    completerpopup.cpp
+    completerpopup.cpp \
+    closebutton.cpp
 
 HEADERS  += tagcompleteritemdelegate.h \
     searchwidget.h \
@@ -25,4 +26,5 @@ HEADERS  += tagcompleteritemdelegate.h \
     tagbutton.h \
     lineeditcompleter.h \
     searchline.h \
-    completerpopup.h
+    completerpopup.h \
+    closebutton.h

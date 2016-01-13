@@ -29,8 +29,6 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     //! [2]
     lineEdit = new SearchLine();
     lineEdit->setStyleSheet("border:#ccc 1px;");
-    this->fontMetrics().height();
-    lineEdit->resize(this->size().width(),this->fontMetrics().height() + 2 * this->buttonPadding);
     this->lineEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 
@@ -42,13 +40,18 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     lineEditCompleter->setPopup(popup);
     lineEdit->setCompleter(lineEditCompleter);
 
+    closeButton = new CloseButton(this);
+
+    connect(closeButton, SIGNAL(pressed()), this, SLOT(clear()));
     connect(lineEdit, SIGNAL(returnPressed()), SLOT(onReturnPressed()));
     //connect(lineEditCompleter, SIGNAL(activated(QModelIndex)),this, SLOT(onCompleterFinished(QModelIndex)));
     connect(lineEditCompleter, SIGNAL(completeFinished(QModelIndex)),this, SLOT(onCompleterFinished(QModelIndex)));
     connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT(onSearchTextChanged(QString)) );
 
     this->flowLayout->addWidget(lineEdit);
-    //this->calcSize();
+    this->flowLayout->addWidget(closeButton);
+
+    this->calcSize();
     this->repaint();
     lineEdit->setFocus();
     //! [2]
@@ -94,21 +97,25 @@ void SearchWidget::addTag(const QModelIndex index)
 void SearchWidget::addTag(TagButton *tag)
 {
     this->flowLayout->removeWidget(this->lineEdit);
+    this->flowLayout->removeWidget(this->closeButton);
     this->flowLayout->addWidget(tag);
 
+    int closeButtonWidth = this->closeButton->minimumWidth() + this->flowLayout->spacing();
     int lastTagLength = tag->minimumWidth() + flowLayout->spacing();
-    int length = calcTagsSpace(false) + lastTagLength;
-    if(length > this->size().width())
+    int length = calcTagsSpace(false) + lastTagLength + closeButtonWidth;
+
+    int newWidth = this->lineEdit->size().width() - lastTagLength;
+
+    if(this->size().width() - length <  this->lineEdit->minimumWidth())
     {
         int rest = this->size().width() - 2*this->buttonPadding;
-        this->lineEdit->setFixedSize(rest - lastTagLength,this->lineEdit->size().height());
+        newWidth = rest - closeButtonWidth;
     }
-    else
-    {
-        this->lineEdit->setFixedSize(this->lineEdit->size().width() - lastTagLength,this->lineEdit->size().height());
-    }
+    this->lineEdit->setFixedSize(newWidth,this->lineEdit->size().height());
 
     this->flowLayout->addWidget(this->lineEdit);
+    this->flowLayout->addWidget(this->closeButton);
+
     connect(tag, SIGNAL(deltag(TagButton*)), this, SLOT(removeTagSlot(TagButton*)) );
     this->repaint();
     return;
@@ -124,8 +131,17 @@ void SearchWidget::removeTag(TagButton *tag)
         this->flowLayout->removeWidget(tag);
         tag->deleteLater();
 
-        int stringLength = calcTagsSpace(true) - tag->minimumWidth() - flowLayout->spacing();
-        lineEdit->setFixedSize((this->size().width() - 2*this->buttonPadding - stringLength), this->fontMetrics().height() + 2*this->buttonPadding);
+        int closeButtonWidth = this->closeButton->minimumWidth() + this->flowLayout->spacing();
+        int tagsSpace = calcTagsSpace(true);
+
+        int stringLength = tagsSpace - tag->minimumWidth() - flowLayout->spacing() - closeButtonWidth;
+        int newWidth = this->size().width() - 2*this->buttonPadding - stringLength;
+
+        if(newWidth + closeButtonWidth + tagsSpace > this->size().width() - 2*this->buttonPadding)
+        {
+            newWidth = this->size().width() - 2*this->buttonPadding;
+        }
+        lineEdit->setFixedSize(newWidth, this->fontMetrics().height() + 2*this->buttonPadding);
 
     }
     return;
@@ -173,7 +189,8 @@ void SearchWidget::clear(void)
     //! [2]
     //! [3] clear text in search line
     this->lineEdit->clear();
-    lineEdit->setFixedSize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
+    int closeButtonWidth = this->closeButton->minimumWidth() + this->flowLayout->spacing();
+    lineEdit->setFixedSize((this->size().width() - 2*this->buttonPadding - closeButtonWidth), this->fontMetrics().height() + 2*this->buttonPadding);
 
     //! [3]
     return;
@@ -213,8 +230,19 @@ void SearchWidget::removeTagSlot(TagButton *tag)
     this->flowLayout->removeWidget(tag);
     tag->deleteLater();
 
-    int stringLength = calcTagsSpace(true) - tag->minimumWidth() - flowLayout->spacing();
-    lineEdit->setFixedSize((this->size().width() - 2*this->buttonPadding - stringLength), this->fontMetrics().height() + 2*this->buttonPadding);
+
+    int closeButtonWidth = this->closeButton->minimumWidth() + this->flowLayout->spacing();
+    int tagsSpace = calcTagsSpace(true);
+
+    int stringLength = tagsSpace - tag->minimumWidth() - flowLayout->spacing() - closeButtonWidth;
+    int newWidth = this->size().width() - 2*this->buttonPadding - stringLength;
+
+    if(newWidth + closeButtonWidth + tagsSpace > this->size().width() - 2*this->buttonPadding)
+    {
+        newWidth = this->size().width() - 2*this->buttonPadding;
+    }
+    lineEdit->setFixedSize(newWidth, this->fontMetrics().height() + 2*this->buttonPadding);
+
 
     //![2]
     if(tag->index().isValid()) {
@@ -235,7 +263,13 @@ void SearchWidget::removeTagSlot(TagButton *tag)
 void SearchWidget::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event);
-    this->lineEdit->setFixedSize((this->size().width() - 2*this->buttonPadding - calcTagsSpace(true)), this->fontMetrics().height() + 2*this->buttonPadding);
+    int closeButtonWidth = this->closeButton->minimumWidth() + this->flowLayout->spacing();
+    int newWidth = this->size().width() - 2*this->buttonPadding - calcTagsSpace(true) - closeButtonWidth;
+    if(newWidth < this->lineEdit->minimumWidth())
+    {
+       newWidth = this->size().width() - 2*this->buttonPadding - closeButtonWidth;
+    }
+    this->lineEdit->setFixedSize(newWidth, this->fontMetrics().height() + 2*this->buttonPadding);
 
     QPoint pos = this->pos();
     pos.setY(pos.y() +  this->fontMetrics().height() + 2*this->buttonPadding);

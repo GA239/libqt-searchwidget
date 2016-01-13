@@ -107,6 +107,8 @@ void TagButton::paintEvent(QPaintEvent *event)
         painter.drawRect(widgetRect);
     }
     //! [1]
+
+
     //! [2] draw text
     painter.setPen(QPen(Qt::black, 0));
     painter.setBrush(QBrush(Qt::transparent));
@@ -114,10 +116,10 @@ void TagButton::paintEvent(QPaintEvent *event)
     painter.setBrush(QBrush(Qt::black));
     painter.drawText(this->textRect, Qt::AlignLeft, this->widgetText);
     //! [2]
+
     //! [3] draw closer
     painter.setPen(QPen(Qt::black, 0));
     painter.setBrush(QBrush(Qt::transparent));
-    //painter.drawRect(this->closerRect);
     painter.setPen(QPen(QColor(114, 114, 114), 4));
     painter.drawLine(this->closerRect.topLeft(), this->closerRect.bottomRight());
     painter.drawLine(this->closerRect.bottomLeft(), this->closerRect.topRight());
