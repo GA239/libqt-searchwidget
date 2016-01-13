@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "../../src/searchwidget.h"
+#include "../src/searchwidget.h"
 
 
 #include <QStringListModel>
