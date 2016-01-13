@@ -272,10 +272,11 @@ void SearchWidget::resizeEvent(QResizeEvent *event)
     this->lineEdit->setFixedSize(newWidth, this->fontMetrics().height() + 2*this->buttonPadding);
 
     QPoint pos = this->pos();
-    pos.setY(pos.y() +  this->fontMetrics().height() + 2*this->buttonPadding);
+    pos.setY(pos.y() + this->fontMetrics().height() + 2*this->buttonPadding);
+    pos.setX(pos.x() + 1 -  this->buttonPadding);
 
     this->popup->setPoint(this->mapToGlobal(pos));
-    this->popup->setWidth(this->size().width() - 2*this->buttonPadding);
+    this->popup->setWidth(this->size().width());
 }
 
 int SearchWidget::minimumHeight()
