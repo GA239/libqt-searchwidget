@@ -270,13 +270,6 @@ void SearchWidget::resizeEvent(QResizeEvent *event)
        newWidth = this->size().width() - 2*this->buttonPadding - closeButtonWidth;
     }
     this->lineEdit->setFixedSize(newWidth, this->fontMetrics().height() + 2*this->buttonPadding);
-
-    QPoint pos = this->pos();
-    pos.setY(pos.y() + this->fontMetrics().height() + 2*this->buttonPadding);
-    pos.setX(pos.x() + 1 -  this->buttonPadding);
-
-    this->popup->setPoint(this->mapToGlobal(pos));
-    this->popup->setWidth(this->size().width());
 }
 
 int SearchWidget::minimumHeight()
@@ -465,7 +458,15 @@ void SearchWidget::paintEvent(QPaintEvent *event)
     QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
     painter.drawRect(widgetRect);
     QRect usedRect(this->rect().top(), this->rect().left(), this->rect().width(), this->lineEdit->rect().bottom());
-    lineEdit->resize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
+    //lineEdit->resize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
+
+    QPoint pos;
+    pos.setX(this->pos().x() + 1 - this->buttonPadding);
+    pos.setY(this->lineEdit->pos().y() + this->lineEdit->minimumHeight() + this->buttonPadding - 1);
+
+    this->popup->setPoint(this->mapToGlobal(pos));
+    this->popup->setWidth(this->size().width());
+
     return;
 }
 

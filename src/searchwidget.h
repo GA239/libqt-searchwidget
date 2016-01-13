@@ -17,10 +17,6 @@
 #include "closebutton.h"
 #include "completerpopup.h"
 
-#define FONT_SIZE 30
-#define INDENT 7
-#define LINE_EDIT_HEIGHT 90
-
 class SearchWidget : public QWidget
 {
     Q_OBJECT
