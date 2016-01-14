@@ -19,6 +19,7 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     this->buttonPadding = 10;
     this->enableNewTagCreation = true;
     this->flowLayout = new FlowLayout;
+
     this->setLayout(this->flowLayout);
     this->setAttribute(Qt::WA_StaticContents);
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -36,8 +37,7 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     lineEditCompleter->setModel(this->model);
     lineEditCompleter->setWrapAround(false);
     lineEditCompleter->setCompletionMode(QCompleter::PopupCompletion);
-    popup = new CompleterPopup(this);
-    lineEditCompleter->setPopup(popup);
+    lineEditCompleter->popup()->setStyleSheet("border: 1px solid black");
     lineEdit->setCompleter(lineEditCompleter);
 
     closeButton = new CloseButton(this);
@@ -117,6 +117,9 @@ void SearchWidget::addTag(TagButton *tag)
     this->flowLayout->addWidget(this->closeButton);
 
     connect(tag, SIGNAL(deltag(TagButton*)), this, SLOT(removeTagSlot(TagButton*)) );
+
+    this->lineEdit->repaint();
+    this->flowLayout->update();
     this->repaint();
     return;
 }
@@ -270,6 +273,7 @@ void SearchWidget::resizeEvent(QResizeEvent *event)
        newWidth = this->size().width() - 2*this->buttonPadding - closeButtonWidth;
     }
     this->lineEdit->setFixedSize(newWidth, this->fontMetrics().height() + 2*this->buttonPadding);
+    lineEditCompleter->popup()->setFixedWidth(this->size().width());
 }
 
 int SearchWidget::minimumHeight()
@@ -460,13 +464,11 @@ void SearchWidget::paintEvent(QPaintEvent *event)
     QRect usedRect(this->rect().top(), this->rect().left(), this->rect().width(), this->lineEdit->rect().bottom());
     //lineEdit->resize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
 
-    QPoint pos;
-    pos.setX(this->pos().x() + 1 - this->buttonPadding);
-    pos.setY(this->lineEdit->pos().y() + this->lineEdit->minimumHeight() + this->buttonPadding - 1);
-
-    this->popup->setPoint(this->mapToGlobal(pos));
-    this->popup->setWidth(this->size().width());
-
+    lineEditCompleter->popup()->setGeometry(mapToGlobal(this->rect().topLeft()).x(),            //popup left top x
+                                            mapToGlobal(this->lineEdit->pos()).y() -1           //popup left top y
+                                            + this->lineEdit->height() + this->buttonPadding,
+                                            lineEditCompleter->popup()->size().width(),         //popup width
+                                            lineEditCompleter->popup()->size().height());       //popup height
     return;
 }
 

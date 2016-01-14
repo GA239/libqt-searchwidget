@@ -15,7 +15,6 @@
 #include "tagcompleteritemdelegate.h"
 #include "tagbutton.h"
 #include "closebutton.h"
-#include "completerpopup.h"
 
 class SearchWidget : public QWidget
 {
@@ -63,7 +62,6 @@ private:
     SearchLine *lineEdit;
     CloseButton *closeButton;
     LineEditCompleter *lineEditCompleter;
-    CompleterPopup* popup;
     QAbstractItemModel *model;
     QItemSelectionModel *selModel;
     TagCompleterItemDelegate *tagCompleterItemDelegate;

@@ -20,7 +20,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     this->searchWidget->setModel(this->model);
 
     QVBoxLayout *verLayout = new QVBoxLayout;
+
+/*
+    QPushButton *getTagButton2 = new QPushButton(this);
+    getTagButton->setText("Get Tags");
+    this->ui->centralWidget->layout()->addWidget(getTagButton);
+    connect(getTagButton2, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
+*/
+
     this->ui->centralWidget->setLayout(verLayout);
+
+    QPushButton *getTagButton = new QPushButton(this);
+    getTagButton->setText("Get Tags");
+    this->ui->centralWidget->layout()->addWidget(getTagButton);
+    connect(getTagButton, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
+
+
     this->ui->centralWidget->layout()->addWidget(searchWidget);
     //QSpacerItem *spacer = new QSpacerItem(40, 20,  QSizePolicy::Minimum, QSizePolicy::Expanding);
     //this->ui->centralwidget->layout()->addItem(spacer);
@@ -35,10 +50,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     label = new QLabel(this);
     this->ui->centralWidget->layout()->addWidget(label);
 
-    QPushButton *getTagButton = new QPushButton(this);
-    getTagButton->setText("Get Tags");
-    this->ui->centralWidget->layout()->addWidget(getTagButton);
-    connect(getTagButton, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
+    QPushButton *getTagButton3 = new QPushButton(this);
+    getTagButton3->setText("Get Tags");
+    this->ui->centralWidget->layout()->addWidget(getTagButton3);
+    connect(getTagButton3, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
 }
 
 /**
