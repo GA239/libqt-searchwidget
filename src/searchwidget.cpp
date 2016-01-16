@@ -53,8 +53,12 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     this->flowLayout->addWidget(lineEdit);
     this->flowLayout->addWidget(closeButton);
 
+    fixedSpace = 2*this->buttonPadding + this->closeButton->minimumWidth() + this->flowLayout->spacing();
+    tagSpace = 0;
+
     this->calcSize();
     this->repaint();
+
     lineEdit->setFocus();
     //! [2]
 }
@@ -102,6 +106,9 @@ void SearchWidget::addTag(TagButton *tag)
     this->flowLayout->removeWidget(this->closeButton);
     this->flowLayout->addWidget(tag);
 
+
+    this->tagSpace += tag->minimumWidth() + flowLayout->spacing();
+    /*
     int closeButtonWidth = this->closeButton->minimumWidth() + this->flowLayout->spacing();
     int lastTagLength = tag->minimumWidth() + flowLayout->spacing();
     int length = calcTagsSpace(false) + lastTagLength + closeButtonWidth;
@@ -114,15 +121,13 @@ void SearchWidget::addTag(TagButton *tag)
         newWidth = rest - closeButtonWidth;
     }
     this->lineEdit->setFixedSize(newWidth,this->lineEdit->size().height());
+    */
 
     this->flowLayout->addWidget(this->lineEdit);
     this->flowLayout->addWidget(this->closeButton);
 
-    connect(tag, SIGNAL(deltag(TagButton*)), this, SLOT(removeTagSlot(TagButton*)) );
 
-    this->lineEdit->repaint();
-    this->flowLayout->update();
-    this->repaint();
+    connect(tag, SIGNAL(deltag(TagButton*)), this, SLOT(removeTagSlot(TagButton*)) );
     return;
 }
 
@@ -136,6 +141,7 @@ void SearchWidget::removeTag(TagButton *tag)
         this->flowLayout->removeWidget(tag);
         tag->deleteLater();
 
+        /*
         int closeButtonWidth = this->closeButton->minimumWidth() + this->flowLayout->spacing();
         int tagsSpace = calcTagsSpace(true);
 
@@ -147,7 +153,7 @@ void SearchWidget::removeTag(TagButton *tag)
             newWidth = this->size().width() - 2*this->buttonPadding;
         }
         lineEdit->setFixedSize(newWidth, this->fontMetrics().height() + 2*this->buttonPadding);
-
+        */
     }
     return;
 }
@@ -194,9 +200,7 @@ void SearchWidget::clear(void)
     //! [2]
     //! [3] clear text in search line
     this->lineEdit->clear();
-    int closeButtonWidth = this->closeButton->minimumWidth() + this->flowLayout->spacing();
-    lineEdit->setFixedSize((this->size().width() - 2*this->buttonPadding - closeButtonWidth), this->fontMetrics().height() + 2*this->buttonPadding);
-
+    lineEdit->setFixedSize((this->size().width() - fixedSpace), this->fontMetrics().height() + 2*this->buttonPadding);
     //! [3]
     return;
 }
@@ -235,7 +239,9 @@ void SearchWidget::removeTagSlot(TagButton *tag)
     this->flowLayout->removeWidget(tag);
     tag->deleteLater();
 
+    this->tagSpace -= tag->minimumWidth() + flowLayout->spacing();
 
+    /*
     int closeButtonWidth = this->closeButton->minimumWidth() + this->flowLayout->spacing();
     int tagsSpace = calcTagsSpace(true);
 
@@ -247,7 +253,7 @@ void SearchWidget::removeTagSlot(TagButton *tag)
         newWidth = this->size().width() - 2*this->buttonPadding;
     }
     lineEdit->setFixedSize(newWidth, this->fontMetrics().height() + 2*this->buttonPadding);
-
+    */
 
     //![2]
     if(tag->index().isValid()) {
@@ -268,14 +274,9 @@ void SearchWidget::removeTagSlot(TagButton *tag)
 void SearchWidget::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event);
-    int closeButtonWidth = this->closeButton->minimumWidth() + this->flowLayout->spacing();
-    int newWidth = this->size().width() - 2*this->buttonPadding - calcTagsSpace(true) - closeButtonWidth;
-    if(newWidth < this->lineEdit->minimumWidth())
-    {
-       newWidth = this->size().width() - 2*this->buttonPadding - closeButtonWidth;
-    }
-    this->lineEdit->setFixedSize(newWidth, this->fontMetrics().height() + 2*this->buttonPadding);
     lineEditCompleter->popup()->setFixedWidth(this->size().width());
+    calcSize();
+    return;
 }
 
 int SearchWidget::minimumHeight()
@@ -464,7 +465,7 @@ void SearchWidget::paintEvent(QPaintEvent *event)
     QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
     painter.drawRect(widgetRect);
     QRect usedRect(this->rect().top(), this->rect().left(), this->rect().width(), this->lineEdit->rect().bottom());
-    lineEdit->resize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
+    //lineEdit->resize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
 
     /*
     if(this->lineEditCompleter->popup()->isVisible()){
@@ -473,10 +474,7 @@ void SearchWidget::paintEvent(QPaintEvent *event)
     }
     */
 
-    lineEditCompleter->popup()->setGeometry(mapToGlobal(this->rect().bottomLeft()).x(),         //popup left top x
-                                            mapToGlobal(this->rect().bottomLeft()).y(),         //popup left top y
-                                            lineEditCompleter->popup()->size().width(),         //popup width
-                                            lineEditCompleter->popup()->size().height());       //popup height
+    calcSize();
     return;
 }
 
@@ -488,6 +486,23 @@ void SearchWidget::calcSize()
     //! [2] calc line edit competer size
     QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
     //! [2]
+
+    int tagSpace = calcTagsSpace(true);
+    int newWidth = this->size().width() - this->fixedSpace  - tagSpace;
+    if(newWidth < this->lineEdit->minimumWidth())
+    {
+       newWidth = this->size().width() - this->fixedSpace;
+    }
+    //newWidth = this->size().width() - this->fixedSpace - this->tagSpace;
+    this->lineEdit->setFixedSize(newWidth, this->fontMetrics().height() + 2*this->buttonPadding);
+
+
+    lineEditCompleter->popup()->setGeometry(mapToGlobal(this->rect().bottomLeft()).x(),         //popup left top x
+                                            mapToGlobal(this->rect().bottomLeft()).y(),         //popup left top y
+                                            lineEditCompleter->popup()->size().width(),         //popup width
+                                            lineEditCompleter->popup()->size().height());       //popup height
+    this->update();
+
 }
 
 /**

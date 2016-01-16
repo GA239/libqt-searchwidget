@@ -19,14 +19,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     this->searchWidget = new SearchWidget(this);
     this->searchWidget->setModel(this->model);
 
-    QVBoxLayout *verLayout = new QVBoxLayout;
-
-/*
-    QPushButton *getTagButton2 = new QPushButton(this);
-    getTagButton->setText("Get Tags");
-    this->ui->centralWidget->layout()->addWidget(getTagButton);
-    connect(getTagButton2, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
-*/
+    //QVBoxLayout *verLayout = new QVBoxLayout;
+    QHBoxLayout *verLayout = new QHBoxLayout;
 
     this->ui->centralWidget->setLayout(verLayout);
 
@@ -35,25 +29,26 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     this->ui->centralWidget->layout()->addWidget(getTagButton);
     connect(getTagButton, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
 
+    QPushButton *getTagButton3 = new QPushButton(this);
+    getTagButton3->setText("Get Tags");
+    this->ui->centralWidget->layout()->addWidget(getTagButton3);
+    connect(getTagButton3, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
+
 
     this->ui->centralWidget->layout()->addWidget(searchWidget);
     //QSpacerItem *spacer = new QSpacerItem(40, 20,  QSizePolicy::Minimum, QSizePolicy::Expanding);
     //this->ui->centralwidget->layout()->addItem(spacer);
 
+
     QListView *listView = new QListView();
     listView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     listView->setModel(this->model);
     searchWidget->setSelectionModel(listView->selectionModel());
-    this->ui->centralWidget->layout()->addWidget(listView);
+    //this->ui->centralWidget->layout()->addWidget(listView);
     listView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     label = new QLabel(this);
     this->ui->centralWidget->layout()->addWidget(label);
-
-    QPushButton *getTagButton3 = new QPushButton(this);
-    getTagButton3->setText("Get Tags");
-    this->ui->centralWidget->layout()->addWidget(getTagButton3);
-    connect(getTagButton3, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
 }
 
 /**

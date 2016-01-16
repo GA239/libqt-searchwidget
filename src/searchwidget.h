@@ -70,6 +70,8 @@ private:
     int buttonPadding;
     bool enableNewTagCreation;
 
+    int fixedSpace;
+    int tagSpace;
 };
 
 #endif // SEARCH_H
