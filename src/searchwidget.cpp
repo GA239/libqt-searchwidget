@@ -37,8 +37,10 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     lineEditCompleter->setModel(this->model);
     lineEditCompleter->setWrapAround(false);
     lineEditCompleter->setCompletionMode(QCompleter::PopupCompletion);
+    lineEditCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     lineEditCompleter->popup()->setStyleSheet("border: 1px solid black");
     lineEdit->setCompleter(lineEditCompleter);
+    //lineEditCompleter->setWidget(this);
 
     closeButton = new CloseButton(this);
 
@@ -462,13 +464,21 @@ void SearchWidget::paintEvent(QPaintEvent *event)
     QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
     painter.drawRect(widgetRect);
     QRect usedRect(this->rect().top(), this->rect().left(), this->rect().width(), this->lineEdit->rect().bottom());
-    //lineEdit->resize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
+    lineEdit->resize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
+
+    /*
+    if(this->lineEditCompleter->popup()->isVisible()){
+        QRect rect = QRect(this->rect().bottomLeft(),QSize(this->size().width(),0));
+        this->lineEditCompleter->complete(rect);
+    }
+    */
 
     lineEditCompleter->popup()->setGeometry(mapToGlobal(this->rect().topLeft()).x(),            //popup left top x
                                             mapToGlobal(this->lineEdit->pos()).y() -1           //popup left top y
                                             + this->lineEdit->height() + this->buttonPadding,
                                             lineEditCompleter->popup()->size().width(),         //popup width
                                             lineEditCompleter->popup()->size().height());       //popup height
+
     return;
 }
 

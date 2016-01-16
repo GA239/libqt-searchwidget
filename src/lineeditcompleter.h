@@ -20,6 +20,7 @@ public:
     LineEditCompleter(QObject * parent = 0);
     bool eventFilter(QObject *object, QEvent *event);
 
+
 signals:
     void completeFinished(QModelIndex index);
 
@@ -34,6 +35,8 @@ protected:
 private:
     int timerId;
     QModelIndex activatedIndex;
+
+    QWidget* wig;
 
 };
 

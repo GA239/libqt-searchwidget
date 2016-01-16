@@ -16,6 +16,7 @@
 #include "tagbutton.h"
 #include "closebutton.h"
 
+
 class SearchWidget : public QWidget
 {
     Q_OBJECT
