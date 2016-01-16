@@ -473,12 +473,10 @@ void SearchWidget::paintEvent(QPaintEvent *event)
     }
     */
 
-    lineEditCompleter->popup()->setGeometry(mapToGlobal(this->rect().topLeft()).x(),            //popup left top x
-                                            mapToGlobal(this->lineEdit->pos()).y() -1           //popup left top y
-                                            + this->lineEdit->height() + this->buttonPadding,
+    lineEditCompleter->popup()->setGeometry(mapToGlobal(this->rect().bottomLeft()).x(),         //popup left top x
+                                            mapToGlobal(this->rect().bottomLeft()).y(),         //popup left top y
                                             lineEditCompleter->popup()->size().width(),         //popup width
                                             lineEditCompleter->popup()->size().height());       //popup height
-
     return;
 }
 
