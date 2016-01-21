@@ -6,25 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>589</width>
-    <height>375</height>
+    <width>558</width>
+    <height>354</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Test SearchWidget</string>
+   <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="searchpanel_widget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>561</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
-  </widget>
+  <widget class="QWidget" name="centralWidget"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

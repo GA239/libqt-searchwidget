@@ -14,10 +14,8 @@
 #include "flowlayout.h"
 #include "tagcompleteritemdelegate.h"
 #include "tagbutton.h"
+#include "closebutton.h"
 
-#define FONT_SIZE 30
-#define INDENT 7
-#define LINE_EDIT_HEIGHT 90
 
 class SearchWidget : public QWidget
 {
@@ -33,9 +31,10 @@ public:
     //! [2] Custom public methods
     void addTag(const QString &data);
     void addTag(const QModelIndex index);
+    void addTag(TagButton *tag);
     void removeTag(TagButton *tag);
     TagButton *getTagByIndex(const QModelIndex index);
-    void clear(void);
+
     //! [2]
     void setModel(QAbstractItemModel *model);
     void setSelectionModel(QItemSelectionModel *selModel);
@@ -50,6 +49,7 @@ public slots:
     void onCompleterFinished(QModelIndex proxyIndex);
     void onReturnPressed(void);
     void onSearchTextChanged(QString text);
+    void clear(void);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -57,9 +57,11 @@ protected:
 private:
    void calcSize(void);
    void insertSelection(QModelIndex index);
+   int calcTagsSpace(void);
 
 private:
-    QLineEdit *lineEdit;
+    SearchLine *lineEdit;
+    CloseButton *closeButton;
     LineEditCompleter *lineEditCompleter;
     QAbstractItemModel *model;
     QItemSelectionModel *selModel;
@@ -68,6 +70,12 @@ private:
     int buttonPadding;
     bool enableNewTagCreation;
 
+    int lineEditWidth;
+    int widgetHeight;
+    int fixedSpace;
+    int tagRowNumber;
+    int verticalSpacing;
+    int horizontalSpacing;
 };
 
 #endif // SEARCH_H

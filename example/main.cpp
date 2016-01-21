@@ -1,11 +1,18 @@
-#include "mainwindow.h"
 #include <QApplication>
 
+#include "mainwindow.h"
+#include <QListView>
+
+/**
+ * @brief Application start from this function.
+ * @param argc
+ * @param argv
+ * @return
+ */
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-
-    return a.exec();
+    QApplication app(argc, argv);
+    MainWindow mainWindow;
+    mainWindow.show();
+    return app.exec();
 }

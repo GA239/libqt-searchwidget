@@ -1,41 +1,84 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QDesktopWidget>
-#include "../seachwidget/searchwidget.h"
-#include <QDir>
-#include "../models/basemodel.h"
-#include "../models/graphproxymodel.h"
 
-#define unit 20
+#include <QPushButton>
+#include <QSpacerItem>
+#include <QListView>
+#include <QDebug>
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+/**
+ * @brief Default constructor. Create new window and sets tefault values.
+ * @param parent
+ */
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->model = new QStringListModel(this);
+    this->model->setStringList(QStringList() << "Item1" << "Item2" << "Item3" << "C" << "C++" << "C#" << "C++" << "php" << "qt");
 
-    //searchwidget init
-    SearchWidget *searchWidget = new SearchWidget(ui->searchpanel_widget);
-    searchWidget->setGeometry(0,0,ui->searchpanel_widget->width(),ui->searchpanel_widget->height());
-    //set styles
-    searchWidget->setSearchlineStyle("border: 0px solid #ffffff; color: #333333; padding: 1px 1px 1px 1px;");
-    searchWidget->setFrameStyle("#searchFrame {border: 1px solid #bdbdbd;}");
-    searchWidget->setTagButtonStyle("border: 1px solid #dae2e8; color: #333333; background: #dae2e8; padding: 0px 2px 0px 2px;");
-    //searchWidget->setClosebtnVisible(false);
+    this->searchWidget = new SearchWidget(this);
+    this->searchWidget->setModel(this->model);
 
-    //![1] create and open temporary database
-    QDir dir = QDir::current();
-    dir.mkdir("db");                                                   // create directory for temporary database in Project dir
-    DataBase *dataBase = DataBase::instance();
-    dataBase->setDataFile(QString("db/test.db"));                       // open temporary database
-    BaseModel *baseModel = new BaseModel(this);
-    GraphProxyModel *model = new GraphProxyModel(this);
-    model->setSourceModel(baseModel);
+    QVBoxLayout *verLayout = new QVBoxLayout;
+    //QHBoxLayout *verLayout = new QHBoxLayout;
 
-    searchWidget->setModel(model);
+    this->ui->centralWidget->setLayout(verLayout);
+
+    QPushButton *getTagButton = new QPushButton(this);
+    getTagButton->setText("Get Tags");
+    this->ui->centralWidget->layout()->addWidget(getTagButton);
+    connect(getTagButton, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
+
+    /*
+    QPushButton *getTagButton3 = new QPushButton(this);
+    getTagButton3->setText("Get Tags");
+    this->ui->centralWidget->layout()->addWidget(getTagButton3);
+    connect(getTagButton3, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
+    */
+
+    this->ui->centralWidget->layout()->addWidget(searchWidget);
+    //QSpacerItem *spacer = new QSpacerItem(40, 20,  QSizePolicy::Minimum, QSizePolicy::Expanding);
+    //this->ui->centralwidget->layout()->addItem(spacer);
+
+
+    QListView *listView = new QListView();
+    listView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    listView->setModel(this->model);
+    searchWidget->setSelectionModel(listView->selectionModel());
+    this->ui->centralWidget->layout()->addWidget(listView);
+    listView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    label = new QLabel(this);
+    this->ui->centralWidget->layout()->addWidget(label);
 }
 
+/**
+ * @brief destructor
+ */
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+/**
+ * @brief Shows tags from search widget
+ */
+void MainWindow::showSearchWidgetTags(void)
+{
+    QStringList stringList  = this->searchWidget->unfindedTags();
+    QModelIndexList indexList = this->searchWidget->tags();
+
+    QModelIndex index;
+    QString text = "finded tags: ";
+    for(int i = 0; i < indexList.count(); i++){
+        index = indexList.at(i);
+        text.append(this->model->data(index, Qt::DisplayRole).toString()).append(QString(", "));
+    }
+    text.append("\r\nunfinded tags: ");
+    for(int i = 0; i < stringList.count(); i++){
+        text.append(stringList.at(i)).append(QString(", "));
+    }
+
+    this->label->setText(text);
+    return;
 }
