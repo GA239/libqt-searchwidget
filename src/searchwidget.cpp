@@ -15,6 +15,7 @@
 SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
 {
     //! [1]
+    widgetHeight = 60;
     this->model = new QStringListModel(this);
     this->buttonPadding = 10;
     this->enableNewTagCreation = true;
@@ -40,7 +41,6 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     lineEditCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     lineEditCompleter->popup()->setStyleSheet("border: 1px solid black");
     lineEdit->setCompleter(lineEditCompleter);
-    //lineEditCompleter->setWidget(this);
 
     closeButton = new CloseButton(this);
 
@@ -53,11 +53,9 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     this->flowLayout->addWidget(lineEdit);
     this->flowLayout->addWidget(closeButton);
 
-    fixedSpace = 2*this->buttonPadding + this->closeButton->minimumWidth() + this->flowLayout->spacing();
-    tagSpace = 0;
-
-    this->calcSize();
-    this->repaint();
+    verticalSpacing = this->flowLayout->verticalSpacing();
+    horizontalSpacing = this->flowLayout->horizontalSpacing();
+    fixedSpace = 2*this->buttonPadding + this->closeButton->minimumWidth() + horizontalSpacing;
 
     lineEdit->setFocus();
     //! [2]
@@ -104,28 +102,11 @@ void SearchWidget::addTag(TagButton *tag)
 {
     this->flowLayout->removeWidget(this->lineEdit);
     this->flowLayout->removeWidget(this->closeButton);
+
     this->flowLayout->addWidget(tag);
-
-
-    this->tagSpace += tag->minimumWidth() + flowLayout->spacing();
-    /*
-    int closeButtonWidth = this->closeButton->minimumWidth() + this->flowLayout->spacing();
-    int lastTagLength = tag->minimumWidth() + flowLayout->spacing();
-    int length = calcTagsSpace(false) + lastTagLength + closeButtonWidth;
-
-    int newWidth = this->lineEdit->size().width() - lastTagLength;
-
-    if(this->size().width() - length <  this->lineEdit->minimumWidth())
-    {
-        int rest = this->size().width() - 2*this->buttonPadding;
-        newWidth = rest - closeButtonWidth;
-    }
-    this->lineEdit->setFixedSize(newWidth,this->lineEdit->size().height());
-    */
 
     this->flowLayout->addWidget(this->lineEdit);
     this->flowLayout->addWidget(this->closeButton);
-
 
     connect(tag, SIGNAL(deltag(TagButton*)), this, SLOT(removeTagSlot(TagButton*)) );
     return;
@@ -140,20 +121,6 @@ void SearchWidget::removeTag(TagButton *tag)
     if(tag != NULL) {
         this->flowLayout->removeWidget(tag);
         tag->deleteLater();
-
-        /*
-        int closeButtonWidth = this->closeButton->minimumWidth() + this->flowLayout->spacing();
-        int tagsSpace = calcTagsSpace(true);
-
-        int stringLength = tagsSpace - tag->minimumWidth() - flowLayout->spacing() - closeButtonWidth;
-        int newWidth = this->size().width() - 2*this->buttonPadding - stringLength;
-
-        if(newWidth + closeButtonWidth + tagsSpace > this->size().width() - 2*this->buttonPadding)
-        {
-            newWidth = this->size().width() - 2*this->buttonPadding;
-        }
-        lineEdit->setFixedSize(newWidth, this->fontMetrics().height() + 2*this->buttonPadding);
-        */
     }
     return;
 }
@@ -239,22 +206,6 @@ void SearchWidget::removeTagSlot(TagButton *tag)
     this->flowLayout->removeWidget(tag);
     tag->deleteLater();
 
-    this->tagSpace -= tag->minimumWidth() + flowLayout->spacing();
-
-    /*
-    int closeButtonWidth = this->closeButton->minimumWidth() + this->flowLayout->spacing();
-    int tagsSpace = calcTagsSpace(true);
-
-    int stringLength = tagsSpace - tag->minimumWidth() - flowLayout->spacing() - closeButtonWidth;
-    int newWidth = this->size().width() - 2*this->buttonPadding - stringLength;
-
-    if(newWidth + closeButtonWidth + tagsSpace > this->size().width() - 2*this->buttonPadding)
-    {
-        newWidth = this->size().width() - 2*this->buttonPadding;
-    }
-    lineEdit->setFixedSize(newWidth, this->fontMetrics().height() + 2*this->buttonPadding);
-    */
-
     //![2]
     if(tag->index().isValid()) {
         QModelIndex index = tag->index();
@@ -328,10 +279,8 @@ void SearchWidget::insertSelection(QModelIndex index)
 
 /**
  * @brief Ñalculates the space occupied by the last line of tags.
- * @param if lastTag == true then calculates with the last tag, else
- * without  the last tag.
  */
-int SearchWidget::calcTagsSpace(bool lastTag)
+int SearchWidget::calcTagsSpace(void)
 {
     TagButton *tag;
     QVector< QVector<int> > indices;
@@ -343,9 +292,6 @@ int SearchWidget::calcTagsSpace(bool lastTag)
     tagsNumberInRow.push_back(0);
 
     int count = this->children().count();
-
-    if(!lastTag)
-        count--;
 
     for(int i = 0; i < count ; i++){
         tag = qobject_cast<TagButton *>(this->children().at(i));
@@ -371,7 +317,8 @@ int SearchWidget::calcTagsSpace(bool lastTag)
         tag = qobject_cast<TagButton *>(this->children().at(indices[indices.length()-1][k]));
         l+= tag->minimumWidth();
     }
-    return l + this->flowLayout->spacing() * tagsNumberInRow[indices.length()-1];
+    this->tagRowNumber = indices.length();
+    return l + horizontalSpacing * tagsNumberInRow[indices.length()-1];
 }
 
 /**
@@ -459,22 +406,14 @@ void SearchWidget::paintEvent(QPaintEvent *event)
     /// @attention QWidget::paintEngine() will never be called (see docs); the backingstore will be used instead.
     Q_UNUSED(event);
     //QPalette palatte = this->palette();
+    calcSize();
     QPainter painter(this);
     painter.setPen(Qt::gray);
     painter.setBrush(Qt::white);
     QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
     painter.drawRect(widgetRect);
-    QRect usedRect(this->rect().top(), this->rect().left(), this->rect().width(), this->lineEdit->rect().bottom());
-    //lineEdit->resize((this->size().width() - 2*this->buttonPadding), this->fontMetrics().height() + 2*this->buttonPadding);
+    //QRect usedRect(this->rect().top(), this->rect().left(), this->rect().width(), this->lineEdit->rect().bottom());
 
-    /*
-    if(this->lineEditCompleter->popup()->isVisible()){
-        QRect rect = QRect(this->rect().bottomLeft(),QSize(this->size().width(),0));
-        this->lineEditCompleter->complete(rect);
-    }
-    */
-
-    calcSize();
     return;
 }
 
@@ -484,25 +423,29 @@ void SearchWidget::paintEvent(QPaintEvent *event)
 void SearchWidget::calcSize()
 {
     //! [2] calc line edit competer size
-    QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
+    QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width(), this->rect().height());
     //! [2]
 
-    int tagSpace = calcTagsSpace(true);
-    int newWidth = this->size().width() - this->fixedSpace  - tagSpace;
-    if(newWidth < this->lineEdit->minimumWidth())
-    {
+    int newWidth = this->size().width() - this->fixedSpace  - calcTagsSpace();
+    if(newWidth < this->lineEdit->minimumWidth()){
        newWidth = this->size().width() - this->fixedSpace;
+       this->tagRowNumber++;
     }
-    //newWidth = this->size().width() - this->fixedSpace - this->tagSpace;
-    this->lineEdit->setFixedSize(newWidth, this->fontMetrics().height() + 2*this->buttonPadding);
+    if(this->lineEditWidth != newWidth){
+        this->lineEditWidth = newWidth;
+    }
 
+    this->lineEdit->setFixedSize(this->lineEditWidth, this->fontMetrics().height() + 2*this->buttonPadding);
+    this->widgetHeight =  (this->fontMetrics().height() + 2*this->buttonPadding + verticalSpacing) * this->tagRowNumber + this->buttonPadding;
+    this->setFixedHeight(this->widgetHeight);
+    this->flowLayout->setGeometry(widgetRect);
 
     lineEditCompleter->popup()->setGeometry(mapToGlobal(this->rect().bottomLeft()).x(),         //popup left top x
                                             mapToGlobal(this->rect().bottomLeft()).y(),         //popup left top y
                                             lineEditCompleter->popup()->size().width(),         //popup width
                                             lineEditCompleter->popup()->size().height());       //popup height
     this->update();
-
+    return;
 }
 
 /**

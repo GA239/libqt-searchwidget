@@ -57,7 +57,7 @@ protected:
 private:
    void calcSize(void);
    void insertSelection(QModelIndex index);
-   int calcTagsSpace(bool lastTag);
+   int calcTagsSpace(void);
 
 private:
     SearchLine *lineEdit;
@@ -70,8 +70,12 @@ private:
     int buttonPadding;
     bool enableNewTagCreation;
 
+    int lineEditWidth;
+    int widgetHeight;
     int fixedSpace;
-    int tagSpace;
+    int tagRowNumber;
+    int verticalSpacing;
+    int horizontalSpacing;
 };
 
 #endif // SEARCH_H
