@@ -73,9 +73,11 @@ private:
     int lineEditWidth;
     int widgetHeight;
     int fixedSpace;
+    int tagSpace;
     int tagRowNumber;
     int verticalSpacing;
     int horizontalSpacing;
+    int childrenNumber;
 };
 
 #endif // SEARCH_H
