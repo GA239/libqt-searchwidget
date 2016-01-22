@@ -16,12 +16,14 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
 {
     //! [1]
     widgetHeight = 60;
+
     this->model = new QStringListModel(this);
     this->buttonPadding = 10;
     this->enableNewTagCreation = true;
     this->flowLayout = new FlowLayout;
+    this->setLayout(flowLayout);
 
-    this->setLayout(this->flowLayout);
+
     this->setAttribute(Qt::WA_StaticContents);
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     tagCompleterItemDelegate = new TagCompleterItemDelegate(this);
@@ -57,7 +59,6 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     horizontalSpacing = this->flowLayout->horizontalSpacing();
     fixedSpace = 2*this->buttonPadding + this->closeButton->minimumWidth() + horizontalSpacing;
 
-    lineEdit->setFocus();
     //! [2]
 }
 
@@ -423,7 +424,7 @@ void SearchWidget::paintEvent(QPaintEvent *event)
 void SearchWidget::calcSize()
 {
     //! [2] calc line edit competer size
-    QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width(), this->rect().height());
+    //QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width(), this->rect().height());
     //! [2]
 
     int newWidth = this->size().width() - this->fixedSpace  - calcTagsSpace();
@@ -431,20 +432,21 @@ void SearchWidget::calcSize()
        newWidth = this->size().width() - this->fixedSpace;
        this->tagRowNumber++;
     }
-    if(this->lineEditWidth != newWidth){
+    if(this->lineEditWidth != newWidth)
         this->lineEditWidth = newWidth;
-    }
 
     this->lineEdit->setFixedSize(this->lineEditWidth, this->fontMetrics().height() + 2*this->buttonPadding);
-    this->widgetHeight =  (this->fontMetrics().height() + 2*this->buttonPadding + verticalSpacing) * this->tagRowNumber + this->buttonPadding;
+    this->widgetHeight = (this->fontMetrics().height() + 2*this->buttonPadding + verticalSpacing) * this->tagRowNumber + this->buttonPadding;
+
     this->setFixedHeight(this->widgetHeight);
-    this->flowLayout->setGeometry(widgetRect);
+    this->flowLayout->setGeometry(QRect(this->rect().top(), this->rect().left(), this->rect().width(), this->widgetHeight));
 
     lineEditCompleter->popup()->setGeometry(mapToGlobal(this->rect().bottomLeft()).x(),         //popup left top x
                                             mapToGlobal(this->rect().bottomLeft()).y(),         //popup left top y
                                             lineEditCompleter->popup()->size().width(),         //popup width
                                             lineEditCompleter->popup()->size().height());       //popup height
     this->update();
+    this->lineEdit->setFocus();
     return;
 }
 

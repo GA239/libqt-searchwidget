@@ -5,6 +5,7 @@
 #include <QSpacerItem>
 #include <QListView>
 #include <QDebug>
+#include <QScrollBar>
 
 /**
  * @brief Default constructor. Create new window and sets tefault values.
@@ -19,9 +20,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     this->searchWidget = new SearchWidget(this);
     this->searchWidget->setModel(this->model);
 
-    QVBoxLayout *verLayout = new QVBoxLayout;
-    //QHBoxLayout *verLayout = new QHBoxLayout;
+    scrollArea = new QScrollArea();
+    scrollArea->setBackgroundRole(QPalette::Button);
+    scrollArea->setStyleSheet("border:#ccc 1px;");
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setWidget(searchWidget);
 
+    QScrollBar* scrollbar = scrollArea->verticalScrollBar();
+    QObject::connect(scrollbar, SIGNAL(rangeChanged(int,int)), this, SLOT(moveScrollBarToBottom(int, int)));
+
+    QVBoxLayout *verLayout = new QVBoxLayout;
     this->ui->centralWidget->setLayout(verLayout);
 
     QPushButton *getTagButton = new QPushButton(this);
@@ -29,16 +37,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     this->ui->centralWidget->layout()->addWidget(getTagButton);
     connect(getTagButton, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
 
-    /*
-    QPushButton *getTagButton3 = new QPushButton(this);
-    getTagButton3->setText("Get Tags");
-    this->ui->centralWidget->layout()->addWidget(getTagButton3);
-    connect(getTagButton3, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
-    */
-
-    this->ui->centralWidget->layout()->addWidget(searchWidget);
-    //QSpacerItem *spacer = new QSpacerItem(40, 20,  QSizePolicy::Minimum, QSizePolicy::Expanding);
-    //this->ui->centralwidget->layout()->addItem(spacer);
+    this->ui->centralWidget->layout()->addWidget(scrollArea);
+    //QSpacerItem *spacer = new QSpacerItem(40, 60,  QSizePolicy::Minimum, QSizePolicy::Expanding);
+    //this->ui->centralWidget->layout()->addItem(spacer);
 
 
     QListView *listView = new QListView();
@@ -80,5 +81,15 @@ void MainWindow::showSearchWidgetTags(void)
     }
 
     this->label->setText(text);
+    return;
+}
+
+/**
+ * @brief Move scrollbar to bottom of scrollarea.
+ */
+void MainWindow::moveScrollBarToBottom(int min, int max)
+{
+    Q_UNUSED(min);
+    scrollArea->verticalScrollBar()->setValue(max);
     return;
 }

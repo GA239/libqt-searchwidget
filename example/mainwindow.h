@@ -21,11 +21,13 @@ public:
 
 public slots:
     void showSearchWidgetTags(void);
+    void moveScrollBarToBottom(int min, int max);
 
 private:
     Ui::MainWindow *ui;
     QStringListModel *model;
     SearchWidget *searchWidget;
+    QScrollArea *scrollArea;
     QLabel *label;
 };
 
