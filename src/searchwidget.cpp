@@ -227,6 +227,7 @@ void SearchWidget::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event);
     lineEditCompleter->popup()->setFixedWidth(this->size().width());
+    this->tagSpace = calcTagsSpace();
     calcSize();
     return;
 }
