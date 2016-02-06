@@ -60,6 +60,7 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
     horizontalSpacing = this->flowLayout->horizontalSpacing();
     fixedSpace = 2*this->buttonPadding + this->closeButton->minimumWidth() + horizontalSpacing;
     //! [2]
+    this->lineEdit->setFocus();
 }
 
 /**
@@ -462,7 +463,6 @@ void SearchWidget::calcSize()
                                             mapToGlobal(this->rect().bottomLeft()).y(),         //popup left top y
                                             lineEditCompleter->popup()->size().width(),         //popup width
                                             lineEditCompleter->popup()->size().height());       //popup height
-    this->lineEdit->setFocus();
     return;
 }
 
