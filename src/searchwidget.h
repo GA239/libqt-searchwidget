@@ -1,83 +1,26 @@
-#ifndef SEARCH_H
-#define SEARCH_H
+#ifndef SEARCHWIDGET_H
+#define SEARCHWIDGET_H
 
-#include <QObject>
-#include <QGraphicsView>
-#include <QWidget>
-#include <QLineEdit>
-#include <QStringListModel>
-#include <QPaintEngine>
-#include <QItemSelectionModel>
-#include <QTimer>
-#include "searchline.h"
-#include "lineeditcompleter.h"
-#include "flowlayout.h"
-#include "tagcompleteritemdelegate.h"
-#include "tagbutton.h"
-#include "closebutton.h"
+#include <QScrollBar>
+#include <QScrollArea>
+#include "flowwidget.h"
 
-
-class SearchWidget : public QWidget
+class SearchWidget : public QScrollArea
 {
     Q_OBJECT
-public:
-    explicit SearchWidget(QWidget *parent = 0);
-    virtual ~SearchWidget();
-    void resizeEvent ( QResizeEvent * event );
-    int minimumHeight();
-    int minimumWidth();
-    QSize minimumSize();
-    QSize sizeHint();
-    //! [2] Custom public methods
-    void addTag(const QString &data);
-    void addTag(const QModelIndex index);
-    void addTag(TagButton *tag);
-    void removeTag(TagButton *tag);
-    TagButton *getTagByIndex(const QModelIndex index);
 
-    //! [2]
+public:
+    SearchWidget();
     void setModel(QAbstractItemModel *model);
     void setSelectionModel(QItemSelectionModel *selModel);
-    QItemSelectionModel* selectionModel() const;
-    QModelIndexList tags(void);
     QStringList unfindedTags();
-    void setEnableNewTagCreation(bool status);
+    QModelIndexList tags();
 
 public slots:
-    void removeTagSlot(TagButton *tag);
-    void onTagSelected(const QItemSelection &selected, const QItemSelection &deselected);
-    void onCompleterFinished(QModelIndex proxyIndex);
-    void onReturnPressed(void);
-    void onSearchTextChanged(QString text);
-    void clear(void);
-
-protected:
-    void paintEvent(QPaintEvent *event);
+    void moveScrollBarToBottom(int min, int max);
 
 private:
-   void calcSize(void);
-   void insertSelection(QModelIndex index);
-   int calcTagsSpace(void);
-
-private:
-    SearchLine *lineEdit;
-    CloseButton *closeButton;
-    LineEditCompleter *lineEditCompleter;
-    QAbstractItemModel *model;
-    QItemSelectionModel *selModel;
-    TagCompleterItemDelegate *tagCompleterItemDelegate;
-    FlowLayout *flowLayout;
-    int buttonPadding;
-    bool enableNewTagCreation;
-
-    int lineEditWidth;
-    int widgetHeight;
-    int fixedSpace;
-    int tagSpace;
-    int tagRowNumber;
-    int verticalSpacing;
-    int horizontalSpacing;
-    int childrenNumber;
+    FlowWidget *flowWidget;
 };
 
-#endif // SEARCH_H
+#endif // SEARCHWIDGET_H

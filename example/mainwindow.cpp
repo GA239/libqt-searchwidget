@@ -17,17 +17,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     this->model = new QStringListModel(this);
     this->model->setStringList(QStringList() << "Item1" << "Item2" << "Item3" << "C" << "C++" << "C#" << "C++" << "php" << "qt");
 
-    this->searchWidget = new SearchWidget(this);
+    this->searchWidget = new SearchWidget();
     this->searchWidget->setModel(this->model);
-
-    scrollArea = new QScrollArea();
-    scrollArea->setBackgroundRole(QPalette::Button);
-    scrollArea->setStyleSheet("border:#ccc 1px;");
-    scrollArea->setWidgetResizable(true);
-    scrollArea->setWidget(searchWidget);
-
-    QScrollBar* scrollbar = scrollArea->verticalScrollBar();
-    QObject::connect(scrollbar, SIGNAL(rangeChanged(int,int)), this, SLOT(moveScrollBarToBottom(int, int)));
 
     QVBoxLayout *verLayout = new QVBoxLayout;
     this->ui->centralWidget->setLayout(verLayout);
@@ -37,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     this->ui->centralWidget->layout()->addWidget(getTagButton);
     connect(getTagButton, SIGNAL(clicked()), this, SLOT(showSearchWidgetTags()) );
 
-    this->ui->centralWidget->layout()->addWidget(scrollArea);
+    this->ui->centralWidget->layout()->addWidget(this->searchWidget);
     //QSpacerItem *spacer = new QSpacerItem(40, 60,  QSizePolicy::Minimum, QSizePolicy::Expanding);
     //this->ui->centralWidget->layout()->addItem(spacer);
 
@@ -45,7 +36,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QListView *listView = new QListView();
     listView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     listView->setModel(this->model);
-    searchWidget->setSelectionModel(listView->selectionModel());
+
+    this->searchWidget->setSelectionModel(listView->selectionModel());
+
     this->ui->centralWidget->layout()->addWidget(listView);
     listView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -81,15 +74,5 @@ void MainWindow::showSearchWidgetTags(void)
     }
 
     this->label->setText(text);
-    return;
-}
-
-/**
- * @brief Move scrollbar to bottom of scrollarea.
- */
-void MainWindow::moveScrollBarToBottom(int min, int max)
-{
-    Q_UNUSED(min);
-    scrollArea->verticalScrollBar()->setValue(max);
     return;
 }

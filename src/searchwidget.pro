@@ -12,17 +12,19 @@ TEMPLATE = lib
 
 
 SOURCES += tagcompleteritemdelegate.cpp \
-    searchwidget.cpp \
     flowlayout.cpp \
     tagbutton.cpp \
     lineeditcompleter.cpp \
     searchline.cpp \
-    closebutton.cpp
+    closebutton.cpp \
+    flowwidget.cpp \
+    searchwidget.cpp
 
 HEADERS  += tagcompleteritemdelegate.h \
-    searchwidget.h \
     flowlayout.h \
     tagbutton.h \
     lineeditcompleter.h \
     searchline.h \
-    closebutton.h
+    closebutton.h \
+    flowwidget.h \
+    searchwidget.h
