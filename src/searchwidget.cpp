@@ -34,6 +34,22 @@ QModelIndexList SearchWidget::tags()
     return this->flowWidget->tags();
 }
 
+QItemSelectionModel *SearchWidget::selectionModel() const
+{
+    return this->flowWidget->selectionModel();
+}
+
+void SearchWidget::setEnableNewTagCreation(bool status)
+{
+    this->flowWidget->setEnableNewTagCreation(status);
+    return;
+}
+
+TagButton *SearchWidget::getTagByIndex(const QModelIndex index)
+{
+    return this->flowWidget->getTagByIndex(index);
+}
+
 void SearchWidget::moveScrollBarToBottom(int min, int max)
 {
     Q_UNUSED(min);

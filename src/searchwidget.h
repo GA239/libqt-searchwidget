@@ -16,6 +16,11 @@ public:
     QStringList unfindedTags();
     QModelIndexList tags();
 
+    QItemSelectionModel* selectionModel() const;
+    void setEnableNewTagCreation(bool status);
+    TagButton *getTagByIndex(const QModelIndex index);
+
+
 public slots:
     void moveScrollBarToBottom(int min, int max);
 
