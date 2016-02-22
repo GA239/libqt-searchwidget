@@ -49,8 +49,8 @@ FlowWidget::FlowWidget(QWidget *parent) : QWidget(parent)
 
     connect(closeButton, SIGNAL(pressed()), this, SLOT(clear()));
     connect(lineEdit, SIGNAL(returnPressed()), SLOT(onReturnPressed()));
-    //connect(lineEditCompleter, SIGNAL(activated(QModelIndex)),this, SLOT(onCompleterFinished(QModelIndex)));
     connect(lineEditCompleter, SIGNAL(completeFinished(QModelIndex)),this, SLOT(onCompleterFinished(QModelIndex)));
+    connect(lineEditCompleter, SIGNAL(highlighted(QModelIndex)),this, SLOT(changeCurrentIndex(QModelIndex)));
     connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT(onSearchTextChanged(QString)) );
 
     this->flowLayout->addWidget(lineEdit);
@@ -77,9 +77,11 @@ FlowWidget::~FlowWidget()
  */
 void FlowWidget::addTag(const QString &data)
 {
-    TagButton *tag = new TagButton(this);
-    tag->setText(data);
-    addTag(tag);
+    if(!data.isEmpty()){
+        TagButton *tag = new TagButton(this);
+        tag->setText(data);
+        addTag(tag);
+    }
     return;
 }
 
@@ -89,10 +91,12 @@ void FlowWidget::addTag(const QString &data)
  */
 void FlowWidget::addTag(const QModelIndex index)
 {
-    TagButton *tag = new TagButton(this);
-    tag->setText(this->model->data(index, Qt::DisplayRole).toString());
-    tag->setIndex(index);
-    addTag(tag);
+    if(index.isValid()){
+        TagButton *tag = new TagButton(this);
+        tag->setText(this->model->data(index, Qt::DisplayRole).toString());
+        tag->setIndex(index);
+        addTag(tag);
+    }
     return;
 }
 
@@ -337,10 +341,10 @@ void FlowWidget::onCompleterFinished(QModelIndex proxyIndex)
         Q_ASSERT(proxyModel != 0);
         QModelIndex index = proxyModel->mapToSource(proxyIndex);
         if(index.isValid()) {
-            this->insertSelection(index);
-            this->lineEdit->clear();
+            //
         }
     }
+    this->lineEdit->clear();
     return;
 }
 
@@ -352,10 +356,12 @@ void FlowWidget::onReturnPressed(void)
     QString prefixText = this->lineEditCompleter->completionPrefix();
     QString completionText = this->lineEditCompleter->currentCompletion();
     QString editText = this->lineEdit->text();
-    if(prefixText != completionText && prefixText == editText){
+    if(prefixText != completionText && prefixText == editText)
         this->addTag(this->lineEdit->text());
-        this->lineEdit->clear();
-    }
+    if((this->currentIndex.isValid()) && (editText == currentIndex.data().toString()))
+        this->insertSelection(this->currentIndex);
+
+    this->lineEdit->clear();
     return;
 }
 
@@ -391,15 +397,27 @@ void FlowWidget::onTagSelected(const QItemSelection & selected, const QItemSelec
  */
 void FlowWidget::onSearchTextChanged(QString text)
 {
+    QString leftSide = text.right(1);
     if(this->enableNewTagCreation) {
-        QString leftSide = text.right(1);
         if(leftSide == ",") {
             QString name = text.left(text.length() - 1);
-            this->addTag(name);
+            if((this->currentIndex.isValid()) && (name == currentIndex.data().toString()))
+                this->insertSelection(this->currentIndex);
+            else
+                this->addTag(name);
             this->lineEdit->clear();
         }
     }
     return;
+}
+
+void FlowWidget::changeCurrentIndex(QModelIndex proxyIndex)
+{
+    if(proxyIndex.isValid()) {
+        QAbstractProxyModel* proxyModel = qobject_cast<QAbstractProxyModel*>(this->lineEditCompleter->completionModel());
+        Q_ASSERT(proxyModel != 0);
+        this->currentIndex = proxyModel->mapToSource(proxyIndex);
+    }
 }
 
 /**

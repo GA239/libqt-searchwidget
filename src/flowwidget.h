@@ -49,6 +49,7 @@ public slots:
     void onCompleterFinished(QModelIndex proxyIndex);
     void onReturnPressed(void);
     void onSearchTextChanged(QString text);
+    void changeCurrentIndex(QModelIndex proxyIndex);
     void clear(void);
 
 protected:
@@ -78,6 +79,8 @@ private:
     int verticalSpacing;
     int horizontalSpacing;
     int childrenNumber;
+
+    QModelIndex currentIndex;
 };
 
 #endif // SEARCH_H
