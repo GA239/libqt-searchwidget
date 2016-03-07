@@ -173,7 +173,7 @@ void FlowWidget::clear(void)
     //! [2]
     //! [3] clear text in search line
     this->lineEdit->clear();
-    lineEdit->setFixedSize((this->size().width() - fixedSpace), this->fontMetrics().height() + 2*this->buttonPadding);
+    lineEdit->resize((this->size().width() - fixedSpace), this->fontMetrics().height() + 2*this->buttonPadding);
     this->lineEdit->setFocus();
     //! [3]
     return;
@@ -232,6 +232,7 @@ void FlowWidget::removeTagSlot(TagButton *tag)
 void FlowWidget::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event);
+
     lineEditCompleter->popup()->setFixedWidth(this->size().width());
     this->tagSpace = calcTagsSpace();
     this->lineEdit->setFocus();
@@ -465,6 +466,7 @@ void FlowWidget::calcSize()
         this->lineEditWidth = newWidth;
 
     this->lineEdit->setFixedSize(this->lineEditWidth, this->fontMetrics().height() + 2*this->buttonPadding);
+    //this->lineEdit->resize(this->lineEditWidth, this->fontMetrics().height() + 2*this->buttonPadding);
 
     int newHeight = (this->fontMetrics().height() + 2*this->buttonPadding + verticalSpacing) * this->tagRowNumber + this->buttonPadding;
 
