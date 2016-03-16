@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QAbstractItemView>
 #include <QAbstractProxyModel>
+#include <QStringListModel>
 
 /**
  * @brief Default Constructor. Sets tefault values, and make
@@ -19,6 +20,7 @@ FlowWidget::FlowWidget(QWidget *parent) : QWidget(parent)
 
     childrenNumber = this->children().count();
     this->model = new QStringListModel(this);
+    this->setSelectionModel(new QItemSelectionModel(this->model));
     this->buttonPadding = 10;
     this->enableNewTagCreation = true;
     this->flowLayout = new FlowLayout;
@@ -80,22 +82,22 @@ void FlowWidget::addTag(const QString &data)
     if(!data.isEmpty()){
         TagButton *tag = new TagButton(this);
         tag->setText(data);
-        addTag(tag);
+        addTagButton(tag);
     }
     return;
 }
 
 /**
- * @brief Creates and adds new TagButton element to widget.
+ * @brief Creates and adds new tag
  * @param index associated with tag; name of tag also takes from index
  */
 void FlowWidget::addTag(const QModelIndex index)
 {
-    if(index.isValid()){
-        TagButton *tag = new TagButton(this);
-        tag->setText(this->model->data(index, Qt::DisplayRole).toString());
-        tag->setIndex(index);
-        addTag(tag);
+    if(index.isValid()) {
+        QItemSelection selection = QItemSelection(index, index);
+        QItemSelection widgetSelection = selectionModel()->selection();
+        widgetSelection.merge(selection, QItemSelectionModel::Toggle);
+        selectionModel()->select(widgetSelection, QItemSelectionModel::ClearAndSelect);
     }
     return;
 }
@@ -104,7 +106,7 @@ void FlowWidget::addTag(const QModelIndex index)
  * @brief Adds a new TagButton element to widget and calculates the size for LineEdit.
  * @param tag - TagButton element.
  */
-void FlowWidget::addTag(TagButton *tag)
+void FlowWidget::addTagButton(TagButton *tag)
 {
     this->flowLayout->removeWidget(this->lineEdit);
     this->flowLayout->removeWidget(this->closeButton);
@@ -114,7 +116,7 @@ void FlowWidget::addTag(TagButton *tag)
     this->flowLayout->addWidget(this->lineEdit);
     this->flowLayout->addWidget(this->closeButton);
 
-    connect(tag, SIGNAL(deltag(TagButton*)), this, SLOT(removeTagSlot(TagButton*)) );
+    connect(tag, SIGNAL(deltag(TagButton*)), this, SLOT(onDeleteTagClick(TagButton*)) );
     return;
 }
 
@@ -122,7 +124,7 @@ void FlowWidget::addTag(TagButton *tag)
  * @brief Removes TagButton element from search widget.
  * @param index
  */
-void FlowWidget::removeTag(TagButton *tag)
+void FlowWidget::deleteTagButton(TagButton *tag)
 {
     if(tag != NULL) {
         this->flowLayout->removeWidget(tag);
@@ -185,10 +187,12 @@ void FlowWidget::clear(void)
  */
 void FlowWidget::setModel(QAbstractItemModel *model)
 {
-    delete this->model;
+    if(model ==NULL) {
+        return;
+    }
     this->model = model;
     this->lineEditCompleter->setModel(model);
-    this->selModel = new QItemSelectionModel(model);
+    this->setSelectionModel(new QItemSelectionModel(model));
     lineEditCompleter->popup()->setItemDelegate(tagCompleterItemDelegate); //Must be set after every time the model is set
     return;
 }
@@ -199,21 +203,19 @@ void FlowWidget::setModel(QAbstractItemModel *model)
  */
 void FlowWidget::setSelectionModel(QItemSelectionModel *selModel)
 {
-    ///@todo remove prev selection model
     this->selModel = selModel;
-    connect( this->selModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(onTagSelected(QItemSelection,QItemSelection)) );
+    connect( this->selModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(onTagSelectionChanged(QItemSelection,QItemSelection)) );
 }
 
 /**
  * @brief Action on request for tag removing from widget
  * @param pointer to TagButton object
  */
-void FlowWidget::removeTagSlot(TagButton *tag)
+void FlowWidget::onDeleteTagClick(TagButton *tag)
 {
-    this->flowLayout->removeWidget(tag);
-    tag->deleteLater();
-
-    //![2]
+    if(!tag) {
+        return;
+    }
     if(tag->index().isValid()) {
         QModelIndex index = tag->index();
         QItemSelection selection = QItemSelection(index, index);
@@ -221,7 +223,9 @@ void FlowWidget::removeTagSlot(TagButton *tag)
         widgetSelection.merge(selection, QItemSelectionModel::Toggle);
         selectionModel()->select(widgetSelection, QItemSelectionModel::ClearAndSelect);
     }
-    //![2]
+    else {
+        this->deleteTagButton(tag);
+    }
     return;
 }
 
@@ -354,15 +358,17 @@ void FlowWidget::onCompleterFinished(QModelIndex proxyIndex)
  */
 void FlowWidget::onReturnPressed(void)
 {
-    QString prefixText = this->lineEditCompleter->completionPrefix();
-    QString completionText = this->lineEditCompleter->currentCompletion();
-    QString editText = this->lineEdit->text();
-    if(prefixText != completionText && prefixText == editText)
-        this->addTag(this->lineEdit->text());
-    if((this->currentIndex.isValid()) && (editText == currentIndex.data().toString()))
-        this->insertSelection(this->currentIndex);
+    if(this->enableNewTagCreation) {
+        QString prefixText = this->lineEditCompleter->completionPrefix();
+        QString completionText = this->lineEditCompleter->currentCompletion();
+        QString editText = this->lineEdit->text();
+        if(prefixText != completionText && prefixText == editText)
+            this->addTag(this->lineEdit->text());
+        if((this->currentIndex.isValid()) && (editText == currentIndex.data().toString()))
+            this->insertSelection(this->currentIndex);
 
-    this->lineEdit->clear();
+        this->lineEdit->clear();
+    }
     return;
 }
 
@@ -373,19 +379,26 @@ void FlowWidget::onReturnPressed(void)
  * @param topLeft
  * @param bottomRight
  */
-void FlowWidget::onTagSelected(const QItemSelection & selected, const QItemSelection & deselected)
+void FlowWidget::onTagSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
     QModelIndexList list;
     TagButton *tag;
+    QModelIndex index;
     list = deselected.indexes();
     for(int i = 0; i < list.count(); i++) {
         tag = this->getTagByIndex(list.at(i));
-        this->removeTag(tag);
+        this->deleteTagButton(tag);
     }
 
     list = selected.indexes();
     for(int i = 0; i < list.count(); i++) {
-        this->addTag(list.at(i));
+        index = list.at(i);
+        if(index.isValid()){
+            TagButton *tag = new TagButton(this);
+            tag->setText(this->model->data(index, Qt::DisplayRole).toString());
+            tag->setIndex(index);
+            addTagButton(tag);
+        }
     }
     return;
 }

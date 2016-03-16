@@ -31,8 +31,8 @@ public:
     //! [2] Custom public methods
     void addTag(const QString &data);
     void addTag(const QModelIndex index);
-    void addTag(TagButton *tag);
-    void removeTag(TagButton *tag);
+    void addTagButton(TagButton *tag);
+    void deleteTagButton(TagButton *tag);
     TagButton *getTagByIndex(const QModelIndex index);
 
     //! [2]
@@ -44,8 +44,8 @@ public:
     void setEnableNewTagCreation(bool status);
 
 public slots:
-    void removeTagSlot(TagButton *tag);
-    void onTagSelected(const QItemSelection &selected, const QItemSelection &deselected);
+    void onDeleteTagClick(TagButton *tag);
+    void onTagSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void onCompleterFinished(QModelIndex proxyIndex);
     void onReturnPressed(void);
     void onSearchTextChanged(QString text);

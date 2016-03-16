@@ -50,6 +50,18 @@ TagButton *SearchWidget::getTagByIndex(const QModelIndex index)
     return this->flowWidget->getTagByIndex(index);
 }
 
+/**
+ * @brief SearchWidget::addTags
+ * @param indexList
+ */
+void SearchWidget::addTags(QModelIndexList indexList)
+{
+    for(int i = 0; i < indexList.count(); i++) {
+        this->flowWidget->addTag(indexList.at(i));
+    }
+    return;
+}
+
 void SearchWidget::moveScrollBarToBottom(int min, int max)
 {
     Q_UNUSED(min);

@@ -20,6 +20,8 @@ public:
     void setEnableNewTagCreation(bool status);
     TagButton *getTagByIndex(const QModelIndex index);
 
+    void addTags(QModelIndexList indexList);
+
 
 public slots:
     void moveScrollBarToBottom(int min, int max);
