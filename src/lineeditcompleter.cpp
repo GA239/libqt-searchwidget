@@ -1,5 +1,5 @@
 #include "LineEditCompleter.h"
-#include "searchwidget.h"
+#include "flowwidget.h"
 
 #include <QAbstractItemView>
 #include <QEvent>

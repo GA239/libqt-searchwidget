@@ -20,9 +20,9 @@ HEADERS  += mainwindow.h
 FORMS    += mainwindow.ui
 
 CONFIG(debug, debug|release) {
-    LIBS+= -L../../build-searchwidget-desktop/Debug/debug -lsearchwidget
+    LIBS+= -L../build-searchwidget-desktop/debug -lsearchwidget
 }
 
 CONFIG(release, debug|release) {
-    LIBS+= -L../../build-searchwidget-desktop/Release/release -lsearchwidget
+    LIBS+= -L../build-searchwidget-desktop/release -lsearchwidget
 }
