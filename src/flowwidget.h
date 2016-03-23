@@ -48,7 +48,9 @@ public slots:
     void onTagSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void onCompleterFinished(QModelIndex proxyIndex);
     void onReturnPressed(void);
+    void mousePressed(QModelIndex index);
     void onSearchTextChanged(QString text);
+    void setSearchText(QString text);
     void changeCurrentIndex(QModelIndex proxyIndex);
     void clear(void);
 

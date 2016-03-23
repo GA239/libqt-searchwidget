@@ -19,13 +19,17 @@ TagCompleterItemDelegate::TagCompleterItemDelegate(QObject *parent)
 void TagCompleterItemDelegate::paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
     // focus
-    if (option.state & QStyle::State_HasFocus) {
+    if ((option.state & QStyle::State_HasFocus) || (option.state & QStyle::State_MouseOver)) {
         painter->fillRect(option.rect, QColor(0xb0,0xb0,0xb0));
         painter->setPen(QPen(QColor(0,0,0)));
     }
     else {
         painter->fillRect(option.rect, Qt::white);
         painter->setPen(QPen(QColor(0xb0,0xb0,0xb0)));
+    }
+
+    if (option.state & QStyle::State_MouseOver) {
+        emit this->mouseOverIndex(index.data().toString());
     }
     //
     QString title = index.data(Qt::DisplayRole).toString();

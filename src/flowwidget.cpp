@@ -54,6 +54,8 @@ FlowWidget::FlowWidget(QWidget *parent) : QWidget(parent)
     connect(lineEditCompleter, SIGNAL(completeFinished(QModelIndex)),this, SLOT(onCompleterFinished(QModelIndex)));
     connect(lineEditCompleter, SIGNAL(highlighted(QModelIndex)),this, SLOT(changeCurrentIndex(QModelIndex)));
     connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT(onSearchTextChanged(QString)) );
+    connect(tagCompleterItemDelegate, SIGNAL(mouseOverIndex(QString)), this, SLOT(setSearchText(QString)) );
+    connect(lineEditCompleter->popup(),SIGNAL(clicked(QModelIndex)), this, SLOT(mousePressed(QModelIndex)) );
 
     this->flowLayout->addWidget(lineEdit);
     this->flowLayout->addWidget(closeButton);
@@ -372,6 +374,13 @@ void FlowWidget::onReturnPressed(void)
     return;
 }
 
+void FlowWidget::mousePressed(QModelIndex index)
+{
+    Q_UNUSED(index);
+    this->onReturnPressed();
+    return;
+}
+
 /**
  * @brief Action on the selection model changes: select and unselect items in widgets,
  * usinf this selection model.
@@ -422,6 +431,12 @@ void FlowWidget::onSearchTextChanged(QString text)
             this->lineEdit->clear();
         }
     }
+    return;
+}
+
+void FlowWidget::setSearchText(QString text)
+{
+    this->lineEdit->setText(text);
     return;
 }
 
