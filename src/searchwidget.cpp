@@ -3,7 +3,6 @@
 SearchWidget::SearchWidget() :QScrollArea()
 {
     this->setBackgroundRole(QPalette::Button);
-    this->setStyleSheet("border:#ccc 1px;");
     this->setWidgetResizable(true);
     this->flowWidget = new FlowWidget(this);
     this->setWidget(this->flowWidget);
@@ -61,6 +60,21 @@ void SearchWidget::addTags(QModelIndexList indexList)
         this->flowWidget->addTag(indexList.at(i));
     }
     return;
+}
+
+void SearchWidget::addTags(QStringList list)
+{
+
+}
+
+QModelIndexList SearchWidget::modelElements()
+{
+    return this->flowWidget->modelElements();
+}
+
+void SearchWidget::clearWidget()
+{
+    this->flowWidget->clear();
 }
 
 void SearchWidget::moveScrollBarToBottom(int min, int max)

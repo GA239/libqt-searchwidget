@@ -39,12 +39,6 @@ LineEditCompleter::LineEditCompleter(const QStringList &list, QObject* parent) :
 LineEditCompleter::LineEditCompleter(QObject *parent):
     QCompleter(parent)
 {
-    //wig = qobject_cast<SearchWidget*>(parent);
-    //this->setWidget(wig);
-    //QRect rect = QRect(wig->mapToGlobal(wig->rect().topLeft()),QSize(wig->size()));
-    //this->complete(rect);
-    //this->popup()->setGeometry(rect);
-
     this->timerId = 0;
     connect(this, SIGNAL(activated(QModelIndex)), this, SLOT(onActivated(QModelIndex)) );
 }

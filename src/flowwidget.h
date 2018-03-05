@@ -40,6 +40,7 @@ public:
     void setSelectionModel(QItemSelectionModel *selModel);
     QItemSelectionModel* selectionModel() const;
     QModelIndexList tags(void);
+    QModelIndexList modelElements(void);
     QStringList unfindedTags();
     void setEnableNewTagCreation(bool status);
 

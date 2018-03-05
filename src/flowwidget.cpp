@@ -35,7 +35,6 @@ FlowWidget::FlowWidget(QWidget *parent) : QWidget(parent)
 
     //! [2]
     lineEdit = new SearchLine();
-    lineEdit->setStyleSheet("border:#ccc 1px;");
     this->lineEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 
@@ -44,7 +43,6 @@ FlowWidget::FlowWidget(QWidget *parent) : QWidget(parent)
     lineEditCompleter->setWrapAround(false);
     lineEditCompleter->setCompletionMode(QCompleter::PopupCompletion);
     lineEditCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-    lineEditCompleter->popup()->setStyleSheet("border: 1px solid black");
     lineEdit->setCompleter(lineEditCompleter);
 
     closeButton = new CloseButton(this);
@@ -457,14 +455,10 @@ void FlowWidget::paintEvent(QPaintEvent *event)
 {
     /// @attention QWidget::paintEngine() will never be called (see docs); the backingstore will be used instead.
     Q_UNUSED(event);
-    //QPalette palatte = this->palette();
     calcSize();
-    QPainter painter(this);
-    painter.setPen(Qt::gray);
-    painter.setBrush(Qt::white);
-    QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
-    painter.drawRect(widgetRect);
-    //QRect usedRect(this->rect().top(), this->rect().left(), this->rect().width(), this->lineEdit->rect().bottom());
+    //QPainter painter(this);
+    //QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
+    //painter.drawRect(widgetRect);
 
     return;
 }
@@ -475,7 +469,6 @@ void FlowWidget::paintEvent(QPaintEvent *event)
 void FlowWidget::calcSize()
 {
     //! [2] calc line edit competer size
-    //QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width(), this->rect().height());
     //! [2]
     if(this->childrenNumber != this->children().count())
     {
@@ -494,8 +487,6 @@ void FlowWidget::calcSize()
         this->lineEditWidth = newWidth;
 
     this->lineEdit->setFixedSize(this->lineEditWidth, this->fontMetrics().height() + 2*this->buttonPadding);
-    //this->lineEdit->resize(this->lineEditWidth, this->fontMetrics().height() + 2*this->buttonPadding);
-
     int newHeight = (this->fontMetrics().height() + 2*this->buttonPadding + verticalSpacing) * this->tagRowNumber + this->buttonPadding;
 
     if(rollBackLater)
@@ -541,6 +532,16 @@ QModelIndexList FlowWidget::tags()
                indexList.append(tag->index());
             }
         }
+    }
+    return indexList;
+}
+
+QModelIndexList FlowWidget::modelElements()
+{
+    QModelIndexList indexList;
+    for(int i=0;i<model->rowCount();i++){
+      QModelIndex index = model->index(i,0);
+      indexList.append(index);
     }
     return indexList;
 }

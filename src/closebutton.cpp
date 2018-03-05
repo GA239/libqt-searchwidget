@@ -47,13 +47,8 @@ void CloseButton::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
     QPainter painter(this);
-
-    painter.setPen(QPen(QColor(222,222,221), 0));
-    painter.setBrush(QBrush(QColor(222,222,221)));
-    QRect widgetRect(this->rect().top(), this->rect().left(), this->rect().width() - 1, this->rect().height() - 1);
-    painter.drawEllipse(widgetRect);
-
     painter.setPen(QPen(QColor(114, 114, 114), 6));
+    painter.setBrush(QBrush(QColor(222,222,221)));
     painter.drawLine(this->closerRect.topLeft(), this->closerRect.bottomRight());
     painter.drawLine(this->closerRect.bottomLeft(), this->closerRect.topRight());
 }

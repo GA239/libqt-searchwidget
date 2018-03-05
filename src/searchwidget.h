@@ -21,7 +21,9 @@ public:
     TagButton *getTagByIndex(const QModelIndex index);
 
     void addTags(QModelIndexList indexList);
-
+    void addTags(QStringList list);
+    QModelIndexList modelElements();
+    void clearWidget();
 
 public slots:
     void moveScrollBarToBottom(int min, int max);
